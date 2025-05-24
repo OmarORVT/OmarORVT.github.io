@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot de Química</title>
+    <link rel="stylesheet" href="CSS/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .chat-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px 8px 0 0;
+            margin: -1rem -1rem 1rem -1rem;
+        }
+        
+        .chat-header h2 {
+            margin: 0;
+            color: white;
+        }
+        
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .message {
+            padding: 0.8rem 1rem;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .user-message {
+            background-color: var(--color-primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .bot-message {
+            background-color: #e0e0e0;
+            color: var(--color-text);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .chat-input input {
+            flex-grow: 1;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .chat-input button {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .chat-input button:hover {
+            background-color: var(--color-accent);
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background-color: #e0e0e0;
+            color: var(--color-text);
+            padding: 0.8rem 1rem;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #666;
+            margin-right: 3px;
+            animation: typing 1s infinite;
+        }
+        
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+            margin-right: 0;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="contenedor">
+            <nav class="menu">
+                <a href="index.html"><b>Inicio</b></a>
+                <a href="indexT1.html"><b>Tema 1</b></a>
+                <a href="indexT2.html"><b>Tema 2</b></a>
+                <a href="Tabla.html"><b>Tabla Periódica</b></a>
+                <a href="cuestionario-tema1.html"><b>Cuestionario T1</b></a>
+                <a href="cuestionario-tema2.html"><b>Cuestionario T2</b></a>
+                <a href="chatbot.html"><b>Chatbot</b></a>
+            </nav>
+            <div class="contenido-header">
+                <h1 class="titulo-header"><b>CHATBOT DE QUÍMICA</b></h1>
+                <samp class="linea-header"></samp>
+                <h2 class="texto-header">
+                    Pregunta cualquier duda sobre química y obtén respuestas al instante
+                </h2>
+                <a href="index.html" class="action-header"><b>Volver al Inicio</b></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2><i class="fas fa-robot"></i> Asistente de Química</h2>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot-message">
+                    ¡Hola! Soy tu asistente virtual de química. Puedo responder preguntas sobre átomos, tabla periódica, enlaces químicos y más. ¿En qué puedo ayudarte hoy?
+                </div>
+            </div>
+            <div class="typing-indicator" id="typing-indicator">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="user-input" placeholder="Escribe tu pregunta aquí..." autocomplete="off">
+                <button id="send-btn"><i class="fas fa-paper-plane"></i> Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+          <!-- CONTACTO -->
+          <div class="contact-info">
+            <h3>Contacto</h3>
+            <p><strong>Teléfono:</strong> +52 123 456 7890</p>
+            <p><strong>Email:</strong> contrreo@hacer.com</p>
+            <p><strong>Dirección:</strong> TECNM, H. Matamoros</p>
+          </div>
+      
+          <!-- Columna de Redes Sociales -->
+          <div class="social-media">
+            <h3>Síguenos</h3>
+            <ul class="social-links">
+              <li><a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i> Facebook</a></li>
+              <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
+              <li><a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i> Twitter</a></li>
+            </ul>
+          </div>
+      
+          <!-- Columna de Enlaces Rápidos -->
+          <div class="quick-links">
+            <h3>Autores</h3>
+            <ul>
+              <li>Andrade Zertuche Carlos Alberto</li>
+              <li>Campos Guillermo Ulises Daniel</li>
+              <li>Covarruvias Ramírez Ricardo Daniel</li>
+              <li>Curiel Román Omar</li>
+              <li>Segura Lopez Estefanie</li>
+              <li>Villanueva Martinez Alfredo</li>
+            </ul>
+          </div>
+      
+          <!-- Formulario de Contacto -->
+          <div class="contact-form">
+            <h3>Envíanos un mensaje</h3>
+            <form action="" class="formulario" method="POST">
+              <input type="text" placeholder="Nombre" id="nombre" name="nombre" required>
+              <input type="email" placeholder="Correo" id="correo" name="correo" required>
+              <textarea name="mensaje" id="mensaje" placeholder="Mensaje"></textarea>
+              <button class="boton" type="submit">Contactar</button>
+            </form>
+          </div>
+        </div>
+      
+        <!-- Pie de Página -->
+        <div class="footer-bottom">
+          <p>&copy; 2025.Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+            const typingIndicator = document.getElementById('typing-indicator');
+            
+            // Base de conocimientos para el chatbot
+            const knowledgeBase = {
+                // Tema 1: El Átomo y la Teoría Cuántica
+                'átomo': 'El átomo es la unidad básica de la materia, compuesta por partículas subatómicas como protones, neutrones y electrones. Los protones tienen carga positiva, los neutrones no tienen carga, y los electrones tienen carga negativa.',
+                'partículas subatómicas': 'Las principales partículas subatómicas son los protones (carga positiva), neutrones (sin carga) y electrones (carga negativa). Los protones y neutrones forman el núcleo del átomo, mientras que los electrones orbitan alrededor del núcleo.',
+                'efecto fotoeléctrico': 'El efecto fotoeléctrico es un fenómeno en el cual la luz incidente (fotones) expulsa electrones de una superficie metálica. Fue observado por Heinrich Hertz en 1887 y explicado por Albert Einstein en 1905, lo que le valió el Premio Nobel de Física.',
+                'principio de incertidumbre': 'El principio de incertidumbre de Heisenberg establece que no se pueden conocer simultáneamente con precisión la posición y el momento lineal de una partícula subatómica. Matemáticamente, se expresa como Δx⋅Δp ≥ ℏ/2.',
+                'dualidad onda-partícula': 'El principio de dualidad onda-partícula, propuesto por Louis de Broglie, sugiere que todas las partículas exhiben propiedades tanto de onda como de partícula. La longitud de onda asociada a una partícula está relacionada con su momento según λ = h/p.',
+                'ecuación de schrödinger': 'La ecuación de Schrödinger es la ecuación fundamental de la mecánica cuántica y describe la evolución temporal de la función de onda de un sistema cuántico. Proporciona una descripción cuantitativa de la evolución del estado cuántico de una partícula.',
+                'modelo atómico de bohr': 'El modelo atómico de Bohr, propuesto por Niels Bohr en 1913, postula que los electrones orbitan alrededor del núcleo en órbitas circulares estacionarias con niveles de energía específicos. Los electrones pueden saltar de una órbita a otra emitiendo o absorbiendo energía en forma de fotones.',
+                
+                // Tema 2: Tabla Periódica y Propiedades Periódicas
+                'tabla periódica': 'La tabla periódica es una organización de los elementos químicos según su número atómico, configuración electrónica y propiedades químicas recurrentes. Los elementos están organizados en períodos (filas) y grupos (columnas).',
+                'radio atómico': 'El radio atómico es la distancia desde el núcleo hasta el orbital más externo. Disminuye de izquierda a derecha en un período debido al aumento de la carga nuclear efectiva, y aumenta de arriba hacia abajo en un grupo debido al aumento de niveles de energía.',
+                'electronegatividad': 'La electronegatividad es la capacidad de un átomo para atraer electrones hacia sí mismo en un enlace químico. Aumenta de izquierda a derecha en un período y disminuye de arriba hacia abajo en un grupo.',
+                'energía de ionización': 'La energía de ionización es la energía necesaria para separar un electrón de un átomo en estado gaseoso. Aumenta de izquierda a derecha en un período y disminuye de arriba hacia abajo en un grupo.',
+                'afinidad electrónica': 'La afinidad electrónica es la energía liberada cuando un átomo en estado gaseoso acepta un electrón para formar un anión. Generalmente aumenta de izquierda a derecha en un período y disminuye de arriba hacia abajo en un grupo.',
+                'metales': 'Los metales son elementos que tienden a perder electrones para formar cationes. Se caracterizan por su brillo metálico, conductividad eléctrica y térmica, maleabilidad y ductilidad. Se encuentran principalmente en el lado izquierdo y central de la tabla periódica.',
+                'no metales': 'Los no metales son elementos que tienden a ganar electrones para formar aniones. Se caracterizan por su baja conductividad eléctrica y térmica. Se encuentran en el lado derecho de la tabla periódica.',
+                'metaloides': 'Los metaloides son elementos que tienen propiedades intermedias entre metales y no metales. Incluyen boro (B), silicio (Si), germanio (Ge), arsénico (As), antimonio (Sb), telurio (Te) y polonio (Po).',
+                'gases nobles': 'Los gases nobles son elementos del Grupo 18 de la tabla periódica. Tienen su capa de valencia completa, lo que los hace extremadamente estables y poco reactivos. Incluyen helio (He), neón (Ne), argón (Ar), kriptón (Kr), xenón (Xe) y radón (Rn).',
+                
+                // Elementos específicos
+                'hidrógeno': 'El hidrógeno (H) es el elemento más ligero y abundante en el universo. Tiene un protón y un electrón, y es un gas incoloro, inodoro e insípido en condiciones normales. Es altamente inflamable y forma agua cuando se combina con oxígeno.',
+                'oxígeno': 'El oxígeno (O) es un elemento no metálico esencial para la respiración y la combustión. Tiene 8 protones y 8 electrones, y es un gas incoloro e inodoro en condiciones normales. Forma parte del agua (H₂O) y de muchos compuestos orgánicos.',
+                'carbono': 'El carbono (C) es un elemento no metálico fundamental para la vida. Tiene 6 protones y 6 electrones, y puede formar una amplia variedad de compuestos debido a su capacidad para formar enlaces covalentes con otros átomos de carbono y otros elementos.',
+                'sodio': 'El sodio (Na) es un metal alcalino del Grupo 1. Es altamente reactivo y se encuentra comúnmente en la sal de mesa (NaCl). Tiene 11 protones y 11 electrones, con un electrón de valencia que pierde fácilmente para formar el catión Na⁺.',
+                'cloro': 'El cloro (Cl) es un halógeno del Grupo 17. Es un gas amarillo-verdoso tóxico en condiciones normales. Tiene 17 protones y 17 electrones, y tiende a ganar un electrón para formar el anión Cl⁻. Se usa comúnmente como desinfectante.',
+                
+                // Conceptos generales
+                'enlace químico': 'Un enlace químico es una fuerza de atracción que mantiene unidos a los átomos en una molécula o compuesto. Los principales tipos de enlaces químicos son el enlace iónico, el enlace covalente y el enlace metálico.',
+                'enlace iónico': 'El enlace iónico se forma por la transferencia de electrones de un metal a un no metal, resultando en la atracción electrostática entre los iones de carga opuesta. Ejemplos incluyen NaCl (sal de mesa) y CaO (óxido de calcio).',
+                'enlace covalente': 'El enlace covalente se forma por la compartición de pares de electrones entre átomos no metálicos. Puede ser polar o no polar, dependiendo de la diferencia de electronegatividad entre los átomos. Ejemplos incluyen H₂O (agua) y CO₂ (dióxido de carbono).',
+                'enlace metálico': 'El enlace metálico se forma por la atracción entre cationes metálicos y electrones deslocalizados. Este tipo de enlace explica propiedades como la conductividad eléctrica y térmica, el brillo metálico y la maleabilidad de los metales.',
+                'reacción química': 'Una reacción química es un proceso en el que una o más sustancias (reactivos) se transforman en otras sustancias (productos) mediante la ruptura y formación de enlaces químicos. Las reacciones químicas pueden ser exotérmicas (liberan energía) o endotérmicas (absorben energía).',
+                'ácido': 'Un ácido es una sustancia que dona protones (H⁺) o acepta pares de electrones en una reacción química. Los ácidos tienen un pH menor a 7, tienen sabor agrio y pueden reaccionar con metales para producir hidrógeno gaseoso.',
+                'base': 'Una base es una sustancia que acepta protones (H⁺) o dona pares de electrones en una reacción química. Las bases tienen un pH mayor a 7, tienen sabor amargo y se sienten resbaladizas al tacto.',
+                'pH': 'El pH es una medida de la acidez o basicidad de una solución acuosa. La escala de pH va de 0 a 14, donde un pH menor a 7 indica acidez, un pH igual a 7 indica neutralidad, y un pH mayor a 7 indica basicidad.',
+                'mol': 'El mol es la unidad de medida de la cantidad de sustancia en el Sistema Internacional de Unidades (SI). Un mol contiene exactamente 6.02214076 × 10²³ entidades elementales (átomos, moléculas, iones, etc.), conocido como el número de Avogadro.',
+                'isótopo': 'Los isótopos son átomos del mismo elemento que tienen el mismo número de protones pero diferente número de neutrones. Por ejemplo, el hidrógeno tiene tres isótopos naturales: protio (¹H), deuterio (²H) y tritio (³H).',
+                'orbital': 'Un orbital es una región del espacio alrededor del núcleo donde hay una alta probabilidad de encontrar un electrón. Los orbitales están caracterizados por los números cuánticos n, l y m, y pueden ser de tipo s, p, d o f, dependiendo del valor de l.'
+            };
+            
+            // Función para obtener respuesta del chatbot
+            function getBotResponse(userMessage) {
+                userMessage = userMessage.toLowerCase();
+                
+                // Buscar coincidencias en la base de conocimientos
+                for (const [keyword, response] of Object.entries(knowledgeBase)) {
+                    if (userMessage.includes(keyword)) {
+                        return response;
+                    }
+                }
+                
+                // Respuestas para preguntas comunes
+                if (userMessage.includes('hola') || userMessage.includes('saludos') || userMessage.includes('buenos días') || userMessage.includes('buenas tardes') || userMessage.includes('buenas noches')) {
+                    return '¡Hola! ¿En qué puedo ayudarte con tus dudas de química?';
+                }
+                
+                if (userMessage.includes('gracias') || userMessage.includes('muchas gracias') || userMessage.includes('te agradezco')) {
+                    return '¡De nada! Estoy aquí para ayudarte con tus dudas de química. ¿Hay algo más en lo que pueda ayudarte?';
+                }
+                
+                if (userMessage.includes('adiós') || userMessage.includes('hasta luego') || userMessage.includes('nos vemos') || userMessage.includes('chao')) {
+                    return '¡Hasta luego! Si tienes más preguntas sobre química, no dudes en volver a consultarme.';
+                }
+                
+                // Respuesta por defecto
+                return 'Lo siento, no tengo información específica sobre eso. ¿Podrías reformular tu pregunta o preguntar sobre otro tema de química? Puedo ayudarte con conceptos como átomos, tabla periódica, enlaces químicos, entre otros.';
+            }
+            
+            // Función para agregar mensaje al chat
+            function addMessage(message, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+                messageDiv.textContent = message;
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Función para mostrar indicador de escritura
+            function showTypingIndicator() {
+                typingIndicator.style.display = 'block';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Función para ocultar indicador de escritura
+            function hideTypingIndicator() {
+                typingIndicator.style.display = 'none';
+            }
+            
+            // Función para procesar la entrada del usuario
+            function processUserInput() {
+                const message = userInput.value.trim();
+                
+                if (message === '') return;
+                
+                // Agregar mensaje del usuario al chat
+                addMessage(message, true);
+                userInput.value = '';
+                
+                // Mostrar indicador de escritura
+                showTypingIndicator();
+                
+                // Simular tiempo de respuesta
+                setTimeout(() => {
+                    // Ocultar indicador de escritura
+                    hideTypingIndicator();
+                    
+                    // Obtener y agregar respuesta del bot
+                    const botResponse = getBotResponse(message);
+                    addMessage(botResponse);
+                }, 1500);
+            }
+            
+            // Event listeners
+            sendBtn.addEventListener('click', processUserInput);
+            
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    processUserInput();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

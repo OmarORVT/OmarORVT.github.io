@@ -1,0 +1,2277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabla Periódica Interactiva</title>
+  <link rel="stylesheet" href="CSS/estilos.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  
+  <style>
+      
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    h1.table-title {
+      color: #e67e22;
+      margin-bottom: 5px;
+    }
+    #info {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin: 0 auto 20px;
+      text-align: left;
+      max-width: 800px;
+      background: #f9f9f9;
+    }
+    table.periodic-table {
+      border-collapse: collapse;
+      margin: 0 auto;
+    }
+    table.periodic-table td {
+      width: 60px;
+      height: 60px;
+      border: 1px solid #ffffffed;
+      vertical-align: top;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    table.periodic-table td:hover {
+      transform: scale(1.1);
+    }
+    .element a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: #2c3e50;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+    .symbol {
+      font-weight: bold;
+      display: block;
+      font-size: 1.2em;
+    }
+    .name {
+      font-size: 0.8em;
+      margin-top: 2px;
+    }
+    
+    .vacio {
+        border: none;
+    }
+             
+    .metal { background-color: #72e75b; }
+    .nometal { background-color: #d84e8e; }
+    .metaloide { background-color: #e98629; }
+    .noble { background-color: #40d4ee; }
+    .lantanido { background-color: #ffd700; }
+    .actinido { background-color: #ff6b6b; }
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Animaciones para elementos */
+.element {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.element:nth-child(odd) {
+    animation-delay: 0.1s;
+}
+
+.element:nth-child(even) {
+    animation-delay: 0.2s;
+}
+
+#info {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.table-title {
+    animation: pulse 2s infinite;
+}
+
+/* Chatbot deslizable */
+.chatbot-slide {
+    position: fixed;
+    top: 50%;
+    right: -350px;
+    transform: translateY(-50%);
+    width: 350px;
+    height: 80vh;
+    background-color: white;
+    border-radius: 12px 0 0 12px;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    transition: right 0.4s ease;
+}
+
+.chatbot-slide.active {
+    right: 0;
+}
+
+.chatbot-toggle {
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
+    background-color: var(--color-primary);
+    border-radius: 8px 0 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.chatbot-toggle:hover {
+    background-color: var(--color-secondary);
+}
+
+@media (max-width: 768px) {
+    .chatbot-slide {
+        width: 300px;
+    }
+}
+  </style>
+</head>
+<body>
+      <!-- Partículas de fondo -->
+<div class="particles" id="particles"></div>
+
+      <header>
+          <div class="contenedor">
+            <nav class="menu">
+                <a href="index.html"><b>Inicio</b></a>
+                <a href="indexT1.html"><b>Tema 1</b></a>
+                <a href="indexT2.html"><b>Tema 2</b></a>
+                <a href="Tabla.html"><b>Tabla Periódica</b></a>
+                <a href="cuestionario-tema1.html"><b>Cuestionario T1</b></a>
+                <a href="cuestionario-tema2.html"><b>Cuestionario T2</b></a>
+                <a href="lineadeltiempo.html"><b>Linea del tiempo</b></a>
+                <a href="chatbot.html"><b>Chatbot</b></a>
+            </nav>
+              <div class="contenido-header">
+                  <h1 class="titulo-header"><b>QUÍMICA</b></h1>
+                  <samp class="linea-header"></samp>
+                  <h2 class="texto-header">
+                  </h2>
+                  <a href="index.html" class="action-header"><b>Inicio</b></a>
+              </div>
+          </div>
+      </header>
+      <main>
+<!--INFORMACION DE CADA ELEMENTO QUE VA A SALIR ARRIBA DE LA TABLA id="" es el identificador de javascript de hasta abajo-->
+    <section id="info">
+      <h2 id="element-name">Seleccione un elemento</h2>
+      <div id="element-details">
+        <p id="descripcion" class="element"></p>
+        <table>
+          <tr><th>Número Atómico:</th><td id="numeroatomi"></td></tr>
+          <tr><th>Categoría:</th><td id="categoria"></td></tr>
+          <tr><th>Configuración Electrónica:</th><td id="configuracion"></td></tr>
+          <tr><th>Radio Atómico:</th><td id="radioatom"></td></tr>
+          <tr><th>Radio Covalente:</th><td id="radiocov"></td></tr>
+          <tr><th>Radio Iónico:</th><td id="radioioni"></td></tr>
+          <tr><th>Energía de Ionización:</th><td id="energiaioni"></td></tr>
+          <tr><th>Afinidad electrónica:</th><td id="afinidadelec"></td></tr>
+          <tr><th>Números de oxidación:</th><td id="numerrosdeoxida"></td></tr>
+          <tr><th>Electronegatividad:</th><td id="electronegativity"></td></tr>
+        </table>
+      </div>
+      
+
+    </section>
+    <section class="tabla">
+      <div class="tablap">
+  <h1 class="table-title">Tabla Periódica</h1>
+  <table class="periodic-table">
+    <!-- PERIODO 1 -->
+    <tr>
+      <td class="element nometal" data-symbol="H"><a href="#" onclick="showInfo('H')"><span class="symbol">H</span><span class="name">Hidrógeno</span></a></td>
+      <td class="vacio" colspan="16"></td>
+      <td class="element noble" data-symbol="He"><a href="#" onclick="showInfo('He')"><span class="symbol">He</span><span class="name">Helio</span></a></td>
+    </tr>
+    <!-- PERIODO 2 , AL FINAL DE CADA tr es un periodo, de forma horizontal de izquierda a derecha-->
+    <tr>
+      <td class="element metal" data-symbol="Li"><a href="#" onclick="showInfo('Li')"><span class="symbol">Li</span><span class="name">Litio</span></a></td>
+      <td class="element metal" data-symbol="Be"><a href="#" onclick="showInfo('Be')"><span class="symbol">Be</span><span class="name">Berilio</span></a></td>
+      <td class="vacio" colspan="10"></td>
+      <td class="element metaloide" data-symbol="B"><a href="#" onclick="showInfo('B')"><span class="symbol">B</span><span class="name">Boro</span></a></td>
+      <td class="element nometal" data-symbol="C"><a href="#" onclick="showInfo('C')"><span class="symbol">C</span><span class="name">Carbono</span></a></td>
+      <td class="element nometal" data-symbol="N"><a href="#" onclick="showInfo('N')"><span class="symbol">N</span><span class="name">Nitrógeno</span></a></td>
+      <td class="element nometal" data-symbol="O"><a href="#" onclick="showInfo('O')"><span class="symbol">O</span><span class="name">Oxígeno</span></a></td>
+      <td class="element nometal" data-symbol="F"><a href="#" onclick="showInfo('F')"><span class="symbol">F</span><span class="name">Flúor</span></a></td>
+      <td class="element noble" data-symbol="Ne"><a href="#" onclick="showInfo('Ne')"><span class="symbol">Ne</span><span class="name">Neón</span></a></td>
+    </tr>
+    <tr>
+      <td class="element metal" data-symbol="Na"><a href="#" onclick="showInfo('Na')"><span class="symbol">Na</span><span class="name">Sodio</span></a></td>
+      <td class="element metal" data-symbol="Mg"><a href="#" onclick="showInfo('Mg')"><span class="symbol">Mg</span><span class="name">Magnesio</span></a></td>
+      <td class="vacio" colspan="10"></td>
+      <td class="element metal" data-symbol="Al"><a href="#" onclick="showInfo('Al')"><span class="symbol">Al</span><span class="name">Aluminio</span></a></td>
+      <td class="element metaloide" data-symbol="Si"><a href="#" onclick="showInfo('Si')"><span class="symbol">Si</span><span class="name">Silicio</span></a></td>
+      <td class="element nometal" data-symbol="P"><a href="#" onclick="showInfo('P')"><span class="symbol">P</span><span class="name">Fósforo</span></a></td>
+      <td class="element nometal" data-symbol="S"><a href="#" onclick="showInfo('S')"><span class="symbol">S</span><span class="name">Azufre</span></a></td>
+      <td class="element nometal" data-symbol="Cl"><a href="#" onclick="showInfo('Cl')"><span class="symbol">Cl</span><span class="name">Cloro</span></a></td>
+      <td class="element noble" data-symbol="Ar"><a href="#" onclick="showInfo('Ar')"><span class="symbol">Ar</span><span class="name">Argón</span></a></td>
+    </tr>
+    <tr>
+      <td class="element metal" data-symbol="K"><a href="#" onclick="showInfo('K')"><span class="symbol">K</span><span class="name">Potasio</span></a></td>
+      <td class="element metal" data-symbol="Ca"><a href="#" onclick="showInfo('Ca')"><span class="symbol">Ca</span><span class="name">Calcio</span></a></td>
+      <td class="element metal" data-symbol="Sc"><a href="#" onclick="showInfo('Sc')"><span class="symbol">Sc</span><span class="name">Escandio</span></a></td>
+      <td class="element metal" data-symbol="Ti"><a href="#" onclick="showInfo('Ti')"><span class="symbol">Ti</span><span class="name">Titanio</span></a></td>
+      <td class="element metal" data-symbol="V"><a href="#" onclick="showInfo('V')"><span class="symbol">V</span><span class="name">Vanadio</span></a></td>
+      <td class="element metal" data-symbol="Cr"><a href="#" onclick="showInfo('Cr')"><span class="symbol">Cr</span><span class="name">Cromo</span></a></td>
+      <td class="element metal" data-symbol="Mn"><a href="#" onclick="showInfo('Mn')"><span class="symbol">Mn</span><span class="name">Manganeso</span></a></td>
+      <td class="element metal" data-symbol="Fe"><a href="#" onclick="showInfo('Fe')"><span class="symbol">Fe</span><span class="name">Hierro</span></a></td>
+      <td class="element metal" data-symbol="Co"><a href="#" onclick="showInfo('Co')"><span class="symbol">Co</span><span class="name">Cobalto</span></a></td>
+      <td class="element metal" data-symbol="Ni"><a href="#" onclick="showInfo('Ni')"><span class="symbol">Ni</span><span class="name">Níquel</span></a></td>
+      <td class="element metal" data-symbol="Cu"><a href="#" onclick="showInfo('Cu')"><span class="symbol">Cu</span><span class="name">Cobre</span></a></td>
+      <td class="element metal" data-symbol="Zn"><a href="#" onclick="showInfo('Zn')"><span class="symbol">Zn</span><span class="name">Zinc</span></a></td>
+      <td class="element metal" data-symbol="Ga"><a href="#" onclick="showInfo('Ga')"><span class="symbol">Ga</span><span class="name">Galio</span></a></td>
+      <td class="element metaloide" data-symbol="Ge"><a href="#" onclick="showInfo('Ge')"><span class="symbol">Ge</span><span class="name">Germanio</span></a></td>
+      <td class="element metaloide" data-symbol="As"><a href="#" onclick="showInfo('As')"><span class="symbol">As</span><span class="name">Arsénico</span></a></td>
+      <td class="element nometal" data-symbol="Se"><a href="#" onclick="showInfo('Se')"><span class="symbol">Se</span><span class="name">Selenio</span></a></td>
+      <td class="element nometal" data-symbol="Br"><a href="#" onclick="showInfo('Br')"><span class="symbol">Br</span><span class="name">Bromo</span></a></td>
+      <td class="element noble" data-symbol="Kr"><a href="#" onclick="showInfo('Kr')"><span class="symbol">Kr</span><span class="name">Kriptón</span></a></td>
+    </tr>
+    <tr>
+      <td class="element metal" data-symbol="Rb"><a href="#" onclick="showInfo('Rb')"><span class="symbol">Rb</span><span class="name">Rubidio</span></a></td>
+      <td class="element metal" data-symbol="Sr"><a href="#" onclick="showInfo('Sr')"><span class="symbol">Sr</span><span class="name">Estroncio</span></a></td>
+      <td class="element metal" data-symbol="Y"><a href="#" onclick="showInfo('Y')"><span class="symbol">Y</span><span class="name">Itrio</span></a></td>
+      <td class="element metal" data-symbol="Zr"><a href="#" onclick="showInfo('Zr')"><span class="symbol">Zr</span><span class="name">Circonio</span></a></td>
+      <td class="element metal" data-symbol="Nb"><a href="#" onclick="showInfo('Nb')"><span class="symbol">Nb</span><span class="name">Niobio</span></a></td>
+      <td class="element metal" data-symbol="Mo"><a href="#" onclick="showInfo('Mo')"><span class="symbol">Mo</span><span class="name">Molibdeno</span></a></td>
+      <td class="element metal" data-symbol="Tc"><a href="#" onclick="showInfo('Tc')"><span class="symbol">Tc</span><span class="name">Tecnecio</span></a></td>
+      <td class="element metal" data-symbol="Ru"><a href="#" onclick="showInfo('Ru')"><span class="symbol">Ru</span><span class="name">Rutenio</span></a></td>
+      <td class="element metal" data-symbol="Rh"><a href="#" onclick="showInfo('Rh')"><span class="symbol">Rh</span><span class="name">Rodio</span></a></td>
+      <td class="element metal" data-symbol="Pd"><a href="#" onclick="showInfo('Pd')"><span class="symbol">Pd</span><span class="name">Paladio</span></a></td>
+      <td class="element metal" data-symbol="Ag"><a href="#" onclick="showInfo('Ag')"><span class="symbol">Ag</span><span class="name">Plata</span></a></td>
+      <td class="element metal" data-symbol="Cd"><a href="#" onclick="showInfo('Cd')"><span class="symbol">Cd</span><span class="name">Cadmio</span></a></td>
+      <td class="element metal" data-symbol="In"><a href="#" onclick="showInfo('In')"><span class="symbol">In</span><span class="name">Indio</span></a></td>
+      <td class="element metal" data-symbol="Sn"><a href="#" onclick="showInfo('Sn')"><span class="symbol">Sn</span><span class="name">Estaño</span></a></td>
+      <td class="element metaloide" data-symbol="Sb"><a href="#" onclick="showInfo('Sb')"><span class="symbol">Sb</span><span class="name">Antimonio</span></a></td>
+      <td class="element metaloide" data-symbol="Te"><a href="#" onclick="showInfo('Te')"><span class="symbol">Te</span><span class="name">Telurio</span></a></td>
+      <td class="element nometal" data-symbol="I"><a href="#" onclick="showInfo('I')"><span class="symbol">I</span><span class="name">Yodo</span></a></td>
+      <td class="element noble" data-symbol="Xe"><a href="#" onclick="showInfo('Xe')"><span class="symbol">Xe</span><span class="name">Xenón</span></a></td>
+    </tr>
+    <tr>
+      <td class="element metal" data-symbol="Cs"><a href="#" onclick="showInfo('Cs')"><span class="symbol">Cs</span><span class="name">Cesio</span></a></td>
+      <td class="element metal" data-symbol="Ba"><a href="#" onclick="showInfo('Ba')"><span class="symbol">Ba</span><span class="name">Bario</span></a></td>
+      <td class="element metal" data-symbol="Lu"><a href="#" onclick="showInfo('La')"><span class="symbol">Lu</span><span class="name">Lutencio</span></a></td>
+      <td class="element metal" data-symbol="Hf"><a href="#" onclick="showInfo('Hf')"><span class="symbol">Hf</span><span class="name">Hafnio</span></a></td>
+      <td class="element metal" data-symbol="Ta"><a href="#" onclick="showInfo('Ta')"><span class="symbol">Ta</span><span class="name">Tántalo</span></a></td>
+      <td class="element metal" data-symbol="W"><a href="#" onclick="showInfo('W')"><span class="symbol">W</span><span class="name">Volframio</span></a></td>
+      <td class="element metal" data-symbol="Re"><a href="#" onclick="showInfo('Re')"><span class="symbol">Re</span><span class="name">Renio</span></a></td>
+      <td class="element metal" data-symbol="Os"><a href="#" onclick="showInfo('Os')"><span class="symbol">Os</span><span class="name">Osmio</span></a></td>
+      <td class="element metal" data-symbol="Ir"><a href="#" onclick="showInfo('Ir')"><span class="symbol">Ir</span><span class="name">Iridio</span></a></td>
+      <td class="element metal" data-symbol="Pt"><a href="#" onclick="showInfo('Pt')"><span class="symbol">Pt</span><span class="name">Platino</span></a></td>
+      <td class="element metal" data-symbol="Au"><a href="#" onclick="showInfo('Au')"><span class="symbol">Au</span><span class="name">Oro</span></a></td>
+      <td class="element metal" data-symbol="Hg"><a href="#" onclick="showInfo('Hg')"><span class="symbol">Hg</span><span class="name">Mercurio</span></a></td>
+      <td class="element metal" data-symbol="Tl"><a href="#" onclick="showInfo('Tl')"><span class="symbol">Tl</span><span class="name">Talio</span></a></td>
+      <td class="element metal" data-symbol="Pb"><a href="#" onclick="showInfo('Pb')"><span class="symbol">Pb</span><span class="name">Plomo</span></a></td>
+      <td class="element metal" data-symbol="Bi"><a href="#" onclick="showInfo('Bi')"><span class="symbol">Bi</span><span class="name">Bismuto</span></a></td>
+      <td class="element metaloide" data-symbol="Po"><a href="#" onclick="showInfo('Po')"><span class="symbol">Po</span><span class="name">Polonio</span></a></td>
+      <td class="element metaloide" data-symbol="At"><a href="#" onclick="showInfo('At')"><span class="symbol">At</span><span class="name">Astato</span></a></td>
+      <td class="element noble" data-symbol="Rn"><a href="#" onclick="showInfo('Rn')"><span class="symbol">Rn</span><span class="name">Radón</span></a></td>
+    </tr>
+    <tr>
+      <td class="element metal" data-symbol="Fr"><a href="#" onclick="showInfo('Fr')"><span class="symbol">Fr</span><span class="name">Francio</span></a></td>
+      <td class="element metal" data-symbol="Ra"><a href="#" onclick="showInfo('Ra')"><span class="symbol">Ra</span><span class="name">Radio</span></a></td>
+      <td class="element metal" data-symbol="Ac"><a href="#" onclick="showInfo('Lr')"><span class="symbol">Lr</span><span class="name">Lawrencio</span></a></td>
+      <td class="element metal" data-symbol="Th"><a href="#" onclick="showInfo('Rf')"><span class="symbol">Rf</span><span class="name">Rutherfordio</span></a></td>
+      <td class="element metal" data-symbol="Pa"><a href="#" onclick="showInfo('Db')"><span class="symbol">Db</span><span class="name">Dubnio</span></a></td>
+      <td class="element metal" data-symbol="U"><a href="#" onclick="showInfo('Sg')"><span class="symbol">Sg</span><span class="name">Seaborgio</span></a></td>
+      <td class="element metal" data-symbol="Np"><a href="#" onclick="showInfo('Bh')"><span class="symbol">Bh</span><span class="name">Bohrio</span></a></td>
+      <td class="element metal" data-symbol="Pu"><a href="#" onclick="showInfo('Hs')"><span class="symbol">Hs</span><span class="name">Hasio</span></a></td>
+      <td class="element metal" data-symbol="Am"><a href="#" onclick="showInfo('Mt')"><span class="symbol">Mt</span><span class="name">Meitnerio</span></a></td>
+      <td class="element metal" data-symbol="Cm"><a href="#" onclick="showInfo('Ds')"><span class="symbol">Ds</span><span class="name">Darmstatio</span></a></td>
+      <td class="element metal" data-symbol="Bk"><a href="#" onclick="showInfo('Rg')"><span class="symbol">Rg</span><span class="name">Roentgenio</span></a></td>
+      <td class="element metal" data-symbol="Cf"><a href="#" onclick="showInfo('Cn')"><span class="symbol">Cn</span><span class="name">Copernicio</span></a></td>
+      <td class="element metal" data-symbol="Es"><a href="#" onclick="showInfo('Nh')"><span class="symbol">Nh</span><span class="name">Nihonio</span></a></td>
+      <td class="element metal" data-symbol="Fm"><a href="#" onclick="showInfo('Fl')"><span class="symbol">Fl</span><span class="name">Flerovio</span></a></td>
+      <td class="element metal" data-symbol="Md"><a href="#" onclick="showInfo('Mc')"><span class="symbol">Mc</span><span class="name">Moscovio</span></a></td>
+      <td class="element metal" data-symbol="No"><a href="#" onclick="showInfo('Lv')"><span class="symbol">Lv</span><span class="name">Livermorio</span></a></td>
+      <td class="element actinido" data-symbol="Lr"><a href="#" onclick="showInfo('Ts')"><span class="symbol">Ts</span><span class="name">Teneso</span></a></td>
+      <td class="element noble" data-symbol="Og"><a href="#" onclick="showInfo('Og')"><span class="symbol">Og</span><span class="name">Oganesón</span></a></td>
+    </tr>
+    
+        <tr>
+        <td class="empty" colspan="18"></td>
+        </tr>
+    <tr class="">
+      <td colspan="3"></td>
+      <td class="element lantanido" data-symbol="La"><a href="#" onclick="showInfo('La')"><span class="symbol">La</span><span class="name">Lantano</span></a></td>
+      <td class="element lantanido" data-symbol="Ce"><a href="#" onclick="showInfo('Ce')"><span class="symbol">Ce</span><span class="name">Cerio</span></a></td>
+      <td class="element lantanido" data-symbol="Pr"><a href="#" onclick="showInfo('Pr')"><span class="symbol">Pr</span><span class="name">Praseodimio</span></a></td>
+      <td class="element lantanido" data-symbol="Nd"><a href="#" onclick="showInfo('Nd')"><span class="symbol">Nd</span><span class="name">Neodimio</span></a></td>
+      <td class="element lantanido" data-symbol="Pm"><a href="#" onclick="showInfo('Pm')"><span class="symbol">Pm</span><span class="name">Prometio</span></a></td>
+      <td class="element lantanido" data-symbol="Sm"><a href="#" onclick="showInfo('Sm')"><span class="symbol">Sm</span><span class="name">Samario</span></a></td>
+      <td class="element lantanido" data-symbol="Eu"><a href="#" onclick="showInfo('Eu')"><span class="symbol">Eu</span><span class="name">Europio</span></a></td>
+      <td class="element lantanido" data-symbol="Gd"><a href="#" onclick="showInfo('Gd')"><span class="symbol">Gd</span><span class="name">Gadolinio</span></a></td>
+      <td class="element lantanido" data-symbol="Tb"><a href="#" onclick="showInfo('Tb')"><span class="symbol">Tb</span><span class="name">Terbio</span></a></td>
+      <td class="element lantanido" data-symbol="Dy"><a href="#" onclick="showInfo('Dy')"><span class="symbol">Dy</span><span class="name">Disprosio</span></a></td>
+      <td class="element lantanido" data-symbol="Ho"><a href="#" onclick="showInfo('Ho')"><span class="symbol">Ho</span><span class="name">Holmio</span></a></td>
+      <td class="element lantanido" data-symbol="Er"><a href="#" onclick="showInfo('Er')"><span class="symbol">Er</span><span class="name">Erbio</span></a></td>
+      <td class="element lantanido" data-symbol="Tm"><a href="#" onclick="showInfo('Tm')"><span class="symbol">Tm</span><span class="name">Tulio</span></a></td>
+      <td class="element lantanido" data-symbol="Yb"><a href="#" onclick="showInfo('Yb')"><span class="symbol">Yb</span><span class="name">Iterbio</span></a></td>
+    </tr>
+    <tr class="">
+      <td colspan="3"></td>
+      <td class="element actinido" data-symbol="Ac"><a href="#" onclick="showInfo('Ac')"><span class="symbol">Ac</span><span class="name">Actinio</span></a></td>
+      <td class="element actinido" data-symbol="Th"><a href="#" onclick="showInfo('Th')"><span class="symbol">Th</span><span class="name">Torio</span></a></td>
+      <td class="element actinido" data-symbol="Pa"><a href="#" onclick="showInfo('Pa')"><span class="symbol">Pa</span><span class="name">Protactinio</span></a></td>
+      <td class="element actinido" data-symbol="U"><a href="#" onclick="showInfo('U')"><span class="symbol">U</span><span class="name">Uranio</span></a></td>
+      <td class="element actinido" data-symbol="Np"><a href="#" onclick="showInfo('Np')"><span class="symbol">Np</span><span class="name">Neptunio</span></a></td>
+      <td class="element actinido" data-symbol="Pu"><a href="#" onclick="showInfo('Pu')"><span class="symbol">Pu</span><span class="name">Plutonio</span></a></td>
+      <td class="element actinido" data-symbol="Am"><a href="#" onclick="showInfo('Am')"><span class="symbol">Am</span><span class="name">Americio</span></a></td>
+      <td class="element actinido" data-symbol="Cm"><a href="#" onclick="showInfo('Cm')"><span class="symbol">Cm</span><span class="name">Curio</span></a></td>
+      <td class="element actinido" data-symbol="Bk"><a href="#" onclick="showInfo('Bk')"><span class="symbol">Bk</span><span class="name">Berkelio</span></a></td>
+      <td class="element actinido" data-symbol="Cf"><a href="#" onclick="showInfo('Cf')"><span class="symbol">Cf</span><span class="name">Californio</span></a></td>
+      <td class="element actinido" data-symbol="Es"><a href="#" onclick="showInfo('Es')"><span class="symbol">Es</span><span class="name">Einstenio</span></a></td>
+      <td class="element actinido" data-symbol="Fm"><a href="#" onclick="showInfo('Fm')"><span class="symbol">Fm</span><span class="name">Fermio</span></a></td>
+      <td class="element actinido" data-symbol="Md"><a href="#" onclick="showInfo('Md')"><span class="symbol">Md</span><span class="name">Mendelevio</span></a></td>
+      <td class="element actinido" data-symbol="No"><a href="#" onclick="showInfo('No')"><span class="symbol">No</span><span class="name">Nobelio</span></a></td>
+    </tr>
+  </table>  
+</div>
+</section>
+
+    </main>
+    <footer class="site-footer">
+        <div class="footer-content">
+          <!-- CONTACTO -->
+          <div class="contact-info">
+            <h3>Contacto</h3>
+            <p><strong>Teléfono:</strong> +52 123 456 7890</p>
+            <p><strong>Email:</strong> contrreo@hacer.com</p>
+            <p><strong>Dirección:</strong> TECNM, H. Matamoros</p>
+          </div>
+      
+          <!-- Columna de Redes Sociales -->
+          <div class="social-media">
+            <h3>Síguenos</h3>
+            <ul class="social-links">
+              <li><a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i> Facebook</a></li>
+              <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
+              <li><a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i> Twitter</a></li>
+            </ul>
+          </div>
+      
+          <!-- Columna de Enlaces Rápidos -->
+          <div class="quick-links">
+            <h3>Autores</h3>
+            <ul>
+              <li>Andrade Zertuche Carlos Alberto</li>
+              <li>Campos Guillermo Ulises Daniel</li>
+              <li>Covarruvias Ramírez Ricardo Daniel</li>
+              <li>Curiel Román Omar</li>
+              <li>Segura Lopez Estefanie</li>
+              <li>Villanueva Martinez Alfredo</li>
+            </ul>
+          </div>
+      
+          <!-- Formulario de Contacto -->
+          <div class="contact-form">
+            <h3>Envíanos un mensaje</h3>
+            <form action="" class="formulario" method="POST">
+              <input type="text" placeholder="Nombre" id="nombre" name="nombre" required>
+              <input type="email" placeholder="Correo" id="correo" name="correo" required>
+              <textarea name="mensaje" id="mensaje" placeholder="Mensaje"></textarea>
+              <button class="boton" type="submit">Contactar</button>
+            </form>
+          </div>
+        </div>
+      
+        <!-- Pie de Página -->
+        <div class="footer-bottom">
+          <p>&copy; 2025.Todos los derechos reservados.</p>
+        </div>
+      </footer>
+</body>
+</html>
+
+  <script>
+    const elementData = {
+      H: { 
+        name: "Hidrógeno",
+numeroatomi: 1,
+configuracion: "1s¹",
+categoria: "No metal",
+radioatom: "53 pm",
+radiocov:"1",
+radioioni:"2",
+energiaioni:"3",
+afinidadelec:"4",
+numerrosdeoxida:"5",
+electronegativity: 2.20,
+descripcion: "El hidrógeno es el elemento más ligero y abundante en el universo. Es un gas incoloro, inodoro e insípido que se utiliza en la producción de amoníaco y como combustible limpio."
+      },
+      
+      He: { 
+        name: "Helio", 
+numeroatomi: 2,
+configuracion: "1s²",
+categoria: "Gas noble",
+radioatom: "31 pm",
+radiocov:"5",
+radioioni:"4",
+energiaioni:"3",
+afinidadelec:"2",
+numerrosdeoxida:"1",
+electronegativity: "No disponible",
+descripcion: "El helio es un gas noble incoloro, inodoro y no tóxico. Se utiliza en globos aerostáticos, criogenia y como gas de protección en soldaduras."
+      },
+      Li: {
+            name: "Litio",
+numeroatomi: "3",
+configuracion: "[He] 2s¹",
+categoria: "Metal alcalino",
+radioatom: "167 pm",
+radiocov: "134 pm",
+radioioni: "76 pm",
+energiaioni: "520 kJ/mol",
+afinidadelec: "59.6 kJ/mol",
+numerrosdeoxida: "+1",
+electronegativity: "0.98",
+descripcion: "Metal blando, usado en baterías recargables."
+            },
+      Be: {
+            name: "Berilio",
+numeroatomi: "4",
+configuracion: "[He] 2s²",
+categoria: "Metal alcalinotérreo",
+radioatom: "112 pm",
+radiocov: "90 pm",
+radioioni: "45 pm",
+energiaioni: "899 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "+2",
+electronegativity: "1.57",
+descripcion: "Metal ligero y tóxico, usado en aleaciones."
+            },
+      B: {
+            name: "Boro",
+numeroatomi: "5",
+configuracion: "[He] 2s² 2p¹",
+categoria: "Metaloide",
+radioatom: "87 pm",
+radiocov: "82 pm",
+radioioni: "27 pm",
+energiaioni: "801 kJ/mol",
+afinidadelec: "26.7 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "2.04",
+descripcion: "Semimetal esencial en la industria de vidrios."
+            },
+      C: {
+            name: "Carbono",
+numeroatomi: "6",
+configuracion: "[He] 2s² 2p²",
+categoria: "No metal",
+radioatom: "67 pm",
+radiocov: "77 pm",
+radioioni: "16 pm",
+energiaioni: "1086 kJ/mol",
+afinidadelec: "153.9 kJ/mol",
+numerrosdeoxida: "+4, -4",
+electronegativity: "2.55",
+descripcion: "Base de la vida orgánica y múltiples formas alotrópicas."
+            },
+      N: {
+            name: "Nitrógeno",
+numeroatomi: "7",
+configuracion: "[He] 2s² 2p³",
+categoria: "No metal",
+radioatom: "56 pm",
+radiocov: "75 pm",
+radioioni: "146 pm",
+energiaioni: "1402 kJ/mol",
+afinidadelec: "7 kJ/mol",
+numerrosdeoxida: "+5, +4, +3, +2, +1, -1, -2, -3",
+electronegativity: "3.04",
+descripcion: "Gas esencial en la atmósfera y compuestos orgánicos."
+            },
+      O: {
+            name: "Oxígeno",
+numeroatomi: "8",
+configuracion: "[He] 2s² 2p⁴",
+categoria: "No metal",
+radioatom: "48 pm",
+radiocov: "73 pm",
+radioioni: "140 pm",
+energiaioni: "1314 kJ/mol",
+afinidadelec: "141 kJ/mol",
+numerrosdeoxida: "-2, -1",
+electronegativity: "3.44",
+descripcion: "Elemento vital para la respiración y la combustión."
+            },
+      F: {
+            name: "Flúor",
+numeroatomi: "9",
+configuracion: "[He] 2s² 2p⁵",
+categoria: "Halógeno",
+radioatom: "42 pm",
+radiocov: "71 pm",
+radioioni: "133 pm",
+energiaioni: "1681 kJ/mol",
+afinidadelec: "328 kJ/mol",
+numerrosdeoxida: "-1",
+electronegativity: "3.98",
+descripcion: "El elemento más electronegativo y reactivo."
+            },
+      Ne: {
+            name: "Neón",
+numeroatomi: "10",
+configuracion: "[He] 2s² 2p⁶",
+categoria: "Gas noble",
+radioatom: "38 pm",
+radiocov: "69 pm",
+radioioni: "No especifico",
+energiaioni: "2081 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "0",
+electronegativity: "No especifico",
+descripcion: "Gas noble usado en letreros luminosos."
+            },
+      Na: {
+            name: "Sodio",
+numeroatomi: "11",
+configuracion: "[Ne] 3s¹",
+categoria: "Metal alcalino",
+radioatom: "190 pm",
+radiocov: "154 pm",
+radioioni: "102 pm",
+energiaioni: "496 kJ/mol",
+afinidadelec: "52.8 kJ/mol",
+numerrosdeoxida: "+1",
+electronegativity: "0.93",
+descripcion: "Metal reactivo, esencial en fluidos corporales."
+            },
+      Mg: {
+            name: "Magnesio",
+numeroatomi: "12",
+configuracion: "[Ne] 3s²",
+categoria: "Metal alcalinotérreo",
+radioatom: "145 pm",
+radiocov: "130 pm",
+radioioni: "72 pm",
+energiaioni: "738 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "+2",
+electronegativity: "1.31",
+descripcion: "Metal ligero, importante en biología y aleaciones."
+            },
+      Al: {
+            name: "Aluminio",
+numeroatomi: "13",
+configuracion: "[Ne] 3s² 3p¹",
+categoria: "Metal",
+radioatom: "118 pm",
+radiocov: "118 pm",
+radioioni: "53.5 pm",
+energiaioni: "578 kJ/mol",
+afinidadelec: "42.5 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.61",
+descripcion: "Metal ligero y resistente, ampliamente usado en industria."
+            },
+      Si: {
+            name: "Silicio",
+numeroatomi: "14",
+configuracion: "[Ne] 3s² 3p²",
+categoria: "Metaloide",
+radioatom: "111 pm",
+radiocov: "111 pm",
+radioioni: "40 pm",
+energiaioni: "786 kJ/mol",
+afinidadelec: "133.6 kJ/mol",
+numerrosdeoxida: "+4, -4",
+electronegativity: "1.90",
+descripcion: "Semiconductor esencial en electrónica y materiales."
+            },
+      P: {
+            name: "Fósforo",
+numeroatomi: "15",
+configuracion: "[Ne] 3s² 3p³",
+categoria: "No metal",
+radioatom: "98 pm",
+radiocov: "106 pm",
+radioioni: "44 pm",
+energiaioni: "1012 kJ/mol",
+afinidadelec: "72 kJ/mol",
+numerrosdeoxida: "+5, +3, -3",
+electronegativity: "2.19",
+descripcion: "Elemento esencial en ADN y fertilizantes."
+            },
+      S: {
+            name: "Azufre",
+numeroatomi: "16",
+configuracion: "[Ne] 3s² 3p⁴",
+categoria: "No metal",
+radioatom: "88 pm",
+radiocov: "102 pm",
+radioioni: "184 pm",
+energiaioni: "1000 kJ/mol",
+afinidadelec: "200 kJ/mol",
+numerrosdeoxida: "+6, +4, +2, -2",
+electronegativity: "2.58",
+descripcion: "Elemento amarillo, usado en ácido sulfúrico y vulcanización."
+            },
+      Cl: {
+            name: "Cloro",
+numeroatomi: "17",
+configuracion: "[Ne] 3s² 3p⁵",
+categoria: "Halógeno",
+radioatom: "79 pm",
+radiocov: "99 pm",
+radioioni: "181 pm",
+energiaioni: "1251 kJ/mol",
+afinidadelec: "349 kJ/mol",
+numerrosdeoxida: "+7, +5, +3, +1, -1",
+electronegativity: "3.16",
+descripcion: "Gas tóxico, usado en desinfección y PVC."
+            },
+      Ar: {
+            name: "Argón",
+numeroatomi: "18",
+configuracion: "[Ne] 3s² 3p⁶",
+categoria: "Gas noble",
+radioatom: "71 pm",
+radiocov: "97 pm",
+radioioni: "No especifico",
+energiaioni: "1521 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "0",
+electronegativity: "No especifico",
+descripcion: "Gas noble inerte, usado en iluminación y soldadura."
+            },
+      K: {
+            name: "Potasio",
+numeroatomi: "19",
+configuracion: "[Ar] 4s¹",
+categoria: "Metal alcalino",
+radioatom: "243 pm",
+radiocov: "196 pm",
+radioioni: "138 pm",
+energiaioni: "419 kJ/mol",
+afinidadelec: "48.4 kJ/mol",
+numerrosdeoxida: "+1",
+electronegativity: "0.82",
+descripcion: "Metal esencial en la función nerviosa y muscular."
+            },
+      Ca: {
+            name: "Calcio",
+numeroatomi: "20",
+configuracion: "[Ar] 4s²",
+categoria: "Metal alcalinotérreo",
+radioatom: "194 pm",
+radiocov: "174 pm",
+radioioni: "100 pm",
+energiaioni: "590 kJ/mol",
+afinidadelec: "2.37 kJ/mol",
+numerrosdeoxida: "+2",
+electronegativity: "1.00",
+descripcion: "Mineral esencial en huesos y conchas."
+            },
+      Sc: {
+            name: "Escandio",
+numeroatomi: "21",
+configuracion: "[Ar] 3d¹ 4s²",
+categoria: "Metal de transición",
+radioatom: "184 pm",
+radiocov: "170 pm",
+radioioni: "74.5 pm",
+energiaioni: "633 kJ/mol",
+afinidadelec: "18.1 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.36",
+descripcion: "Metal blando, usado en luces de alta intensidad."
+            },
+      Ti: {
+            name: "Titanio",
+numeroatomi: "22",
+configuracion: "[Ar] 3d² 4s²",
+categoria: "Metal de transición",
+radioatom: "176 pm",
+radiocov: "160 pm",
+radioioni: "86 pm",
+energiaioni: "659 kJ/mol",
+afinidadelec: "7.6 kJ/mol",
+numerrosdeoxida: "+4, +3, +2",
+electronegativity: "1.54",
+descripcion: "Metal resistente y ligero, usado en aeronáutica."
+            },
+      V: {
+            name: "Vanadio",
+numeroatomi: "23",
+configuracion: "[Ar] 3d³ 4s²",
+categoria: "Metal de transición",
+radioatom: "171 pm",
+radiocov: "153 pm",
+radioioni: "79 pm",
+energiaioni: "651 kJ/mol",
+afinidadelec: "50.6 kJ/mol",
+numerrosdeoxida: "+5, +4, +3, +2",
+electronegativity: "1.63",
+descripcion: "Metal duro, usado en aceros resistentes."
+            },
+      Cr: {
+            name: "Cromo",
+numeroatomi: "24",
+configuracion: "[Ar] 3d⁵ 4s¹",
+categoria: "Metal de transición",
+radioatom: "166 pm",
+radiocov: "139 pm",
+radioioni: "80 pm",
+energiaioni: "653 kJ/mol",
+afinidadelec: "64.3 kJ/mol",
+numerrosdeoxida: "+6, +3, +2",
+electronegativity: "1.66",
+descripcion: "Metal brillante, usado en cromado y aceros inoxidables."
+            },
+      Mn: {
+            name: "Manganeso",
+numeroatomi: "25",
+configuracion: "[Ar] 3d⁵ 4s²",
+categoria: "Metal de transición",
+radioatom: "161 pm",
+radiocov: "139 pm",
+radioioni: "67 pm",
+energiaioni: "717 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "+7, +6, +4, +3, +2",
+electronegativity: "1.55",
+descripcion: "Metal esencial en aleaciones y enzimas."
+            },
+      Fe: {
+            name: "Hierro",
+numeroatomi: "26",
+configuracion: "[Ar] 3d⁶ 4s²",
+categoria: "Metal de transición",
+radioatom: "156 pm",
+radiocov: "125 pm",
+radioioni: "78 pm",
+energiaioni: "762 kJ/mol",
+afinidadelec: "15.7 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.83",
+descripcion: "Metal esencial en la sangre y construcción."
+            },
+      Co: {
+            name: "Cobalto",
+numeroatomi: "27",
+configuracion: "[Ar] 3d⁷ 4s²",
+categoria: "Metal de transición",
+radioatom: "152 pm",
+radiocov: "126 pm",
+radioioni: "74 pm",
+energiaioni: "760 kJ/mol",
+afinidadelec: "63.7 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.88",
+descripcion: "Usado en imanes y baterías recargables."
+            },
+      Ni: {
+            name: "Níquel",
+numeroatomi: "28",
+configuracion: "[Ar] 3d⁸ 4s²",
+categoria: "Metal de transición",
+radioatom: "149 pm",
+radiocov: "121 pm",
+radioioni: "69 pm",
+energiaioni: "737 kJ/mol",
+afinidadelec: "112 kJ/mol",
+numerrosdeoxida: "+2, +3",
+electronegativity: "1.91",
+descripcion: "Metal resistente a la corrosión, usado en monedas."
+            },
+      Cu: {
+            name: "Cobre",
+numeroatomi: "29",
+configuracion: "[Ar] 3d¹⁰ 4s¹",
+categoria: "Metal de transición",
+radioatom: "145 pm",
+radiocov: "138 pm",
+radioioni: "77 pm",
+energiaioni: "745 kJ/mol",
+afinidadelec: "118.4 kJ/mol",
+numerrosdeoxida: "+2, +1",
+electronegativity: "1.90",
+descripcion: "Excelente conductor, usado en cables y electrónica."
+            },
+      Zn: {
+            name: "Zinc",
+numeroatomi: "30",
+configuracion: "[Ar] 3d¹⁰ 4s²",
+categoria: "Metal de transición",
+radioatom: "142 pm",
+radiocov: "131 pm",
+radioioni: "74 pm",
+energiaioni: "906 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "+2",
+electronegativity: "1.65",
+descripcion: "Metal usado en galvanización y baterías."
+            },
+      Ga: {
+            name: "Galio",
+numeroatomi: "31",
+configuracion: "[Ar] 3d¹⁰ 4s² 4p¹",
+categoria: "Metal",
+radioatom: "136 pm",
+radiocov: "126 pm",
+radioioni: "62 pm",
+energiaioni: "579 kJ/mol",
+afinidadelec: "28.9 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.81",
+descripcion: "Metal que se derrite en la mano, usado en semiconductores."
+            },
+      Ge: {
+            name: "Germanio",
+numeroatomi: "32",
+configuracion: "[Ar] 3d¹⁰ 4s² 4p²",
+categoria: "Metaloide",
+radioatom: "125 pm",
+radiocov: "122 pm",
+radioioni: "53 pm",
+energiaioni: "762 kJ/mol",
+afinidadelec: "119 kJ/mol",
+numerrosdeoxida: "+4, +2",
+electronegativity: "2.01",
+descripcion: "Semiconductor clave en la electrónica temprana."
+            },
+      As: {
+            name: "Arsénico",
+numeroatomi: "33",
+configuracion: "[Ar] 3d¹⁰ 4s² 4p³",
+categoria: "Metaloide",
+radioatom: "114 pm",
+radiocov: "119 pm",
+radioioni: "58 pm",
+energiaioni: "947 kJ/mol",
+afinidadelec: "78 kJ/mol",
+numerrosdeoxida: "+5, +3, -3",
+electronegativity: "2.18",
+descripcion: "Tóxico en altas dosis, usado en pesticidas."
+            },
+      Se: {
+            name: "Selenio",
+numeroatomi: "34",
+configuracion: "[Ar] 3d¹⁰ 4s² 4p⁴",
+categoria: "No metal",
+radioatom: "103 pm",
+radiocov: "116 pm",
+radioioni: "198 pm",
+energiaioni: "941 kJ/mol",
+afinidadelec: "195 kJ/mol",
+numerrosdeoxida: "+6, +4, -2",
+electronegativity: "2.55",
+descripcion: "Esencial en enzimas antioxidantes."
+            },
+      Br: {
+            name: "Bromo",
+numeroatomi: "35",
+configuracion: "[Ar] 3d¹⁰ 4s² 4p⁵",
+categoria: "Halógeno",
+radioatom: "94 pm",
+radiocov: "114 pm",
+radioioni: "182 pm",
+energiaioni: "1140 kJ/mol",
+afinidadelec: "324.6 kJ/mol",
+numerrosdeoxida: "+7, +5, +3, +1, -1",
+electronegativity: "2.96",
+descripcion: "Líquido rojo oscuro, usado en retardantes de llama."
+            },
+      Kr: {
+            name: "Kriptón",
+numeroatomi: "36",
+configuracion: "[Ar] 3d¹⁰ 4s² 4p⁶",
+categoria: "Gas noble",
+radioatom: "88 pm",
+radiocov: "110 pm",
+radioioni: "No especifico",
+energiaioni: "1351 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "0, +2",
+electronegativity: "3.00",
+descripcion: "Gas noble usado en iluminación y láseres."
+            },
+      Rb: {
+            name: "Rubidio",
+numeroatomi: "37",
+configuracion: "[Kr] 5s¹",
+categoria: "Metal alcalino",
+radioatom: "265 pm",
+radiocov: "211 pm",
+radioioni: "152 pm",
+energiaioni: "403 kJ/mol",
+afinidadelec: "46.9 kJ/mol",
+numerrosdeoxida: "+1",
+electronegativity: "0.82",
+descripcion: "Metal blando y reactivo, usado en relojes atómicos."
+            },
+      Sr: {
+            name: "Estroncio",
+numeroatomi: "38",
+configuracion: "[Kr] 5s²",
+categoria: "Metal alcalinotérreo",
+radioatom: "219 pm",
+radiocov: "192 pm",
+radioioni: "118 pm",
+energiaioni: "550 kJ/mol",
+afinidadelec: "5.03 kJ/mol",
+numerrosdeoxida: "+2",
+electronegativity: "0.95",
+descripcion: "Usado en fuegos artificiales (color rojo)."
+            },
+      Y: {
+            name: "Itrio",
+numeroatomi: "39",
+configuracion: "[Kr] 4d¹ 5s²",
+categoria: "Metal de transición",
+radioatom: "212 pm",
+radiocov: "162 pm",
+radioioni: "90 pm",
+energiaioni: "600 kJ/mol",
+afinidadelec: "29.6 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.22",
+descripcion: "Usado en superconductores y LEDs."
+            },
+      Zr: {
+            name: "Circonio",
+numeroatomi: "40",
+configuracion: "[Kr] 4d² 5s²",
+categoria: "Metal de transición",
+radioatom: "206 pm",
+radiocov: "148 pm",
+radioioni: "86 pm",
+energiaioni: "640 kJ/mol",
+afinidadelec: "41.1 kJ/mol",
+numerrosdeoxida: "+4",
+electronegativity: "1.33",
+descripcion: "Resistente a la corrosión, usado en reactores nucleares."
+            },
+      Nb: {
+            name: "Niobio",
+numeroatomi: "41",
+configuracion: "[Kr] 4d⁴ 5s¹",
+categoria: "Metal de transición",
+radioatom: "198 pm",
+radiocov: "164 pm",
+radioioni: "72 pm",
+energiaioni: "652 kJ/mol",
+afinidadelec: "86.1 kJ/mol",
+numerrosdeoxida: "+5, +3",
+electronegativity: "1.60",
+descripcion: "Metal refractario, usado en aleaciones para cohetes."
+            },
+      Mo: {
+            name: "Molibdeno",
+numeroatomi: "42",
+configuracion: "[Kr] 4d⁵ 5s¹",
+categoria: "Metal de transición",
+radioatom: "190 pm",
+radiocov: "154 pm",
+radioioni: "69 pm",
+energiaioni: "684 kJ/mol",
+afinidadelec: "72.1 kJ/mol",
+numerrosdeoxida: "+6, +4, +3, +2",
+electronegativity: "2.16",
+descripcion: "Esencial en enzimas y aceros de alta resistencia."
+            },
+      Tc: {
+            name: "Tecnecio",
+numeroatomi: "43",
+configuracion: "[Kr] 4d⁵ 5s²",
+categoria: "Metal de transición",
+radioatom: "183 pm",
+radiocov: "147 pm",
+radioioni: "64 pm",
+energiaioni: "702 kJ/mol",
+afinidadelec: "53 kJ/mol",
+numerrosdeoxida: "+7, +6, +4",
+electronegativity: "1.90",
+descripcion: "Primer elemento artificial, usado en medicina nuclear."
+            },
+      Ru: {
+            name: "Rutenio",
+numeroatomi: "44",
+configuracion: "[Kr] 4d⁷ 5s¹",
+categoria: "Metal de transición",
+radioatom: "178 pm",
+radiocov: "146 pm",
+radioioni: "68 pm",
+energiaioni: "710 kJ/mol",
+afinidadelec: "101.3 kJ/mol",
+numerrosdeoxida: "+8, +6, +4, +3, +2",
+electronegativity: "2.20",
+descripcion: "Usado en catalizadores y electrónica dura."
+            },
+      Rh: {
+            name: "Rodio",
+numeroatomi: "45",
+configuracion: "[Kr] 4d⁸ 5s¹",
+categoria: "Metal de transición",
+radioatom: "173 pm",
+radiocov: "142 pm",
+radioioni: "66 pm",
+energiaioni: "720 kJ/mol",
+afinidadelec: "110 kJ/mol",
+numerrosdeoxida: "+3, +4",
+electronegativity: "2.28",
+descripcion: "Metal precioso, usado en convertidores catalíticos."
+            },
+      Pd: {
+            name: "Paladio",
+numeroatomi: "46",
+configuracion: "[Kr] 4d¹⁰",
+categoria: "Metal de transición",
+radioatom: "169 pm",
+radiocov: "139 pm",
+radioioni: "59 pm",
+energiaioni: "804 kJ/mol",
+afinidadelec: "54.2 kJ/mol",
+numerrosdeoxida: "+2, +4",
+electronegativity: "2.20",
+descripcion: "Absorbe hidrógeno, usado en joyería y catalizadores."
+            },
+      Ag: {
+            name: "Plata",
+numeroatomi: "47",
+configuracion: "[Kr] 4d¹⁰ 5s¹",
+categoria: "Metal de transición",
+radioatom: "165 pm",
+radiocov: "145 pm",
+radioioni: "115 pm",
+energiaioni: "731 kJ/mol",
+afinidadelec: "125.6 kJ/mol",
+numerrosdeoxida: "+1, +2",
+electronegativity: "1.93",
+descripcion: "El mejor conductor térmico y eléctrico, usado en joyería."
+            },
+      Cd: {
+            name: "Cadmio",
+numeroatomi: "48",
+configuracion: "[Kr] 4d¹⁰ 5s²",
+categoria: "Metal de transición",
+radioatom: "161 pm",
+radiocov: "144 pm",
+radioioni: "95 pm",
+energiaioni: "868 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "+2",
+electronegativity: "1.69",
+descripcion: "Tóxico, usado en baterías recargables (Ni-Cd)."
+            },
+      In: {
+            name: "Indio",
+numeroatomi: "49",
+configuracion: "[Kr] 4d¹⁰ 5s² 5p¹",
+categoria: "Metal",
+radioatom: "156 pm",
+radiocov: "142 pm",
+radioioni: "80 pm",
+energiaioni: "558 kJ/mol",
+afinidadelec: "28.9 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.78",
+descripcion: "Metal blando, usado en pantallas táctiles y LEDs."
+            },
+      Sn: {
+            name: "Estaño",
+numeroatomi: "50",
+configuracion: "[Kr] 4d¹⁰ 5s² 5p²",
+categoria: "Metal",
+radioatom: "145 pm",
+radiocov: "139 pm",
+radioioni: "69 pm",
+energiaioni: "709 kJ/mol",
+afinidadelec: "107.3 kJ/mol",
+numerrosdeoxida: "+4, +2",
+electronegativity: "1.96",
+descripcion: "Usado en soldaduras y latas de conserva."
+            },
+      Sb: {
+            name: "Antimonio",
+numeroatomi: "51",
+configuracion: "[Kr] 4d¹⁰ 5s² 5p³",
+categoria: "Metaloide",
+radioatom: "133 pm",
+radiocov: "139 pm",
+radioioni: "76 pm",
+energiaioni: "834 kJ/mol",
+afinidadelec: "103.2 kJ/mol",
+numerrosdeoxida: "+5, +3, -3",
+electronegativity: "2.05",
+descripcion: "Usado en retardantes de llama y aleaciones."
+            },
+      Te: {
+            name: "Telurio",
+numeroatomi: "52",
+configuracion: "[Kr] 4d¹⁰ 5s² 5p⁴",
+categoria: "Metaloide",
+radioatom: "123 pm",
+radiocov: "138 pm",
+radioioni: "221 pm",
+energiaioni: "869 kJ/mol",
+afinidadelec: "190.2 kJ/mol",
+numerrosdeoxida: "+6, +4, -2",
+electronegativity: "2.10",
+descripcion: "Semiconductor, usado en paneles solares."
+            },
+      I: {
+            name: "Yodo",
+numeroatomi: "53",
+configuracion: "[Kr] 4d¹⁰ 5s² 5p⁵",
+categoria: "Halógeno",
+radioatom: "115 pm",
+radiocov: "133 pm",
+radioioni: "220 pm",
+energiaioni: "1008 kJ/mol",
+afinidadelec: "295.2 kJ/mol",
+numerrosdeoxida: "+7, +5, +1, -1",
+electronegativity: "2.66",
+descripcion: "Esencial para la glándula tiroides."
+            },
+      Xe: {
+            name: "Xenón",
+numeroatomi: "54",
+configuracion: "[Kr] 4d¹⁰ 5s² 5p⁶",
+categoria: "Gas noble",
+radioatom: "108 pm",
+radiocov: "130 pm",
+radioioni: "No especifico",
+energiaioni: "1170 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "+8, +6, +4, +2",
+electronegativity: "2.60",
+descripcion: "Usado en lámparas y anestésicos."
+            },
+      Cs: {
+            name: "Cesio",
+numeroatomi: "55",
+configuracion: "[Xe] 6s¹",
+categoria: "Metal alcalino",
+radioatom: "298 pm",
+radiocov: "225 pm",
+radioioni: "167 pm",
+energiaioni: "376 kJ/mol",
+afinidadelec: "45.5 kJ/mol",
+numerrosdeoxida: "+1",
+electronegativity: "0.79",
+descripcion: "El metal más reactivo, usado en relojes atómicos."
+            },
+      Ba: {
+            name: "Bario",
+numeroatomi: "56",
+configuracion: "[Xe] 6s²",
+categoria: "Metal alcalinotérreo",
+radioatom: "253 pm",
+radiocov: "198 pm",
+radioioni: "135 pm",
+energiaioni: "503 kJ/mol",
+afinidadelec: "13.95 kJ/mol",
+numerrosdeoxida: "+2",
+electronegativity: "0.89",
+descripcion: "Usado en contrastes para rayos X."
+            },
+      La: {
+            name: "Lantano",
+numeroatomi: "57",
+configuracion: "[Xe] 5d¹ 6s²",
+categoria: "Lantánido",
+radioatom: "195 pm",
+radiocov: "169 pm",
+radioioni: "103 pm",
+energiaioni: "538 kJ/mol",
+afinidadelec: "53 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.10",
+descripcion: "Primer lantánido, usado en baterías recargables."
+            },
+      Ce: {
+            name: "Cerio",
+numeroatomi: "58",
+configuracion: "[Xe] 4f¹ 5d¹ 6s²",
+categoria: "Lantánido",
+radioatom: "185 pm",
+radiocov: "165 pm",
+radioioni: "101 pm",
+energiaioni: "534 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+4, +3",
+electronegativity: "1.12",
+descripcion: "Usado en catalizadores y pulido de vidrios."
+            },
+      Pr: {
+            name: "Praseodimio",
+numeroatomi: "59",
+configuracion: "[Xe] 4f³ 6s²",
+categoria: "Lantánido",
+radioatom: "185 pm",
+radiocov: "203 pm",
+radioioni: "99 pm",
+energiaioni: "527 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+4, +3",
+electronegativity: "1.13",
+descripcion: "Usado en imanes permanentes y aleaciones para motores de aviones."
+            },
+      Nd: {
+            name: "Neodimio",
+numeroatomi: "60",
+configuracion: "[Xe] 4f⁴ 6s²",
+categoria: "Lantánido",
+radioatom: "181 pm",
+radiocov: "201 pm",
+radioioni: "98.3 pm",
+energiaioni: "533 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.14",
+descripcion: "Clave en imanes de neodimio (los más potentes conocidos)."
+            },
+      Pm: {
+            name: "Prometio",
+numeroatomi: "61",
+configuracion: "[Xe] 4f⁵ 6s²",
+categoria: "Lantánido",
+radioatom: "183 pm",
+radiocov: "199 pm",
+radioioni: "97 pm",
+energiaioni: "540 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.13",
+descripcion: "Único lantánido radioactivo natural, usado en baterías nucleares."
+            },
+      Sm: {
+            name: "Samario",
+numeroatomi: "62",
+configuracion: "[Xe] 4f⁶ 6s²",
+categoria: "Lantánido",
+radioatom: "180 pm",
+radiocov: "198 pm",
+radioioni: "95.8 pm",
+energiaioni: "545 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.17",
+descripcion: "Usado en imanes y tratamientos contra el cáncer."
+            },
+      Eu: {
+            name: "Europio",
+numeroatomi: "63",
+configuracion: "[Xe] 4f⁷ 6s²",
+categoria: "Lantánido",
+radioatom: "180 pm",
+radiocov: "198 pm",
+radioioni: "94.7 pm",
+energiaioni: "547 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.20",
+descripcion: "Emite luz roja en pantallas de TV y lámparas fluorescentes."
+            },
+      Gd: {
+            name: "Gadolinio",
+numeroatomi: "64",
+configuracion: "[Xe] 4f⁷ 5d¹ 6s²",
+categoria: "Lantánido",
+radioatom: "180 pm",
+radiocov: "196 pm",
+radioioni: "93.8 pm",
+energiaioni: "593 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.20",
+descripcion: "Usado en contraste para resonancias magnéticas (MRI)."
+            },
+      Tb: {
+            name: "Terbio",
+numeroatomi: "65",
+configuracion: "[Xe] 4f⁹ 6s²",
+categoria: "Lantánido",
+radioatom: "177 pm",
+radiocov: "194 pm",
+radioioni: "92.3 pm",
+energiaioni: "566 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+4, +3",
+electronegativity: "1.20",
+descripcion: "Emite luz verde en lámparas y dispositivos ópticos."
+            },
+      Dy: {
+            name: "Disprosio",
+numeroatomi: "66",
+configuracion: "[Xe] 4f¹⁰ 6s²",
+categoria: "Lantánido",
+radioatom: "178 pm",
+radiocov: "192 pm",
+radioioni: "91.2 pm",
+energiaioni: "573 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.22",
+descripcion: "Usado en imanes de alta resistencia y aleaciones especiales."
+            },
+      Ho: {
+            name: "Holmio",
+numeroatomi: "67",
+configuracion: "[Xe] 4f¹¹ 6s²",
+categoria: "Lantánido",
+radioatom: "176 pm",
+radiocov: "192 pm",
+radioioni: "90.1 pm",
+energiaioni: "581 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.23",
+descripcion: "Tiene las propiedades magnéticas más fuertes de cualquier elemento."
+            },
+      Er: {
+            name: "Erbio",
+numeroatomi: "68",
+configuracion: "[Xe] 4f¹² 6s²",
+categoria: "Lantánido",
+radioatom: "176 pm",
+radiocov: "189 pm",
+radioioni: "89.0 pm",
+energiaioni: "589 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.24",
+descripcion: "Usado en fibras ópticas y láseres médicos."
+            },
+      Tm: {
+            name: "Tulio",
+numeroatomi: "69",
+configuracion: "[Xe] 4f¹³ 6s²",
+categoria: "Lantánido",
+radioatom: "176 pm",
+radiocov: "190 pm",
+radioioni: "88.0 pm",
+energiaioni: "597 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.25",
+descripcion: "El lantánido más raro, usado en máquinas de rayos X portátiles."
+            },
+      Yb: {
+            name: "Iterbio",
+numeroatomi: "70",
+configuracion: "[Xe] 4f¹⁴ 6s²",
+categoria: "Lantánido",
+radioatom: "176 pm",
+radiocov: "187 pm",
+radioioni: "86.8 pm",
+energiaioni: "603 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.10",
+descripcion: "Usado en relojes atómicos y aleaciones para mejorar propiedades mecánicas."
+            },
+      Lu: {
+            name: "Lutecio",
+numeroatomi: "71",
+configuracion: "[Xe] 4f¹⁴ 5d¹ 6s²",
+categoria: "Lantánido",
+radioatom: "173 pm",
+radiocov: "187 pm",
+radioioni: "86.1 pm",
+energiaioni: "524 kJ/mol",
+afinidadelec: "50 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.27",
+descripcion: "El lantánido más denso y con mayor punto de fusión."
+            },
+      Hf: {
+            name: "Hafnio",
+numeroatomi: "72",
+configuracion: "[Xe] 4f¹⁴ 5d² 6s²",
+categoria: "Metal de transición",
+radioatom: "159 pm",
+radiocov: "150 pm",
+radioioni: "71 pm",
+energiaioni: "658 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "+4",
+electronegativity: "1.30",
+descripcion: "Usado en barras de control nuclear."
+            },
+      Ta: {
+            name: "Tantalio",
+numeroatomi: "73",
+configuracion: "[Xe] 4f¹⁴ 5d³ 6s²",
+categoria: "Metal de transición",
+radioatom: "146 pm",
+radiocov: "138 pm",
+radioioni: "72 pm",
+energiaioni: "761 kJ/mol",
+afinidadelec: "31 kJ/mol",
+numerrosdeoxida: "+5",
+electronegativity: "1.50",
+descripcion: "Resistente a la corrosión, usado en implantes médicos."
+            },
+      W: {
+            name: "Wolframio",
+numeroatomi: "74",
+configuracion: "[Xe] 4f¹⁴ 5d⁴ 6s²",
+categoria: "Metal de transición",
+radioatom: "139 pm",
+radiocov: "146 pm",
+radioioni: "66 pm",
+energiaioni: "770 kJ/mol",
+afinidadelec: "78.6 kJ/mol",
+numerrosdeoxida: "+6",
+electronegativity: "2.36",
+descripcion: "Metal con el punto de fusión más alto (3,422°C)."
+            },
+      Re: {
+            name: "Renio",
+numeroatomi: "75",
+configuracion: "[Xe] 4f¹⁴ 5d⁵ 6s²",
+categoria: "Metal de transición",
+radioatom: "137 pm",
+radiocov: "159 pm",
+radioioni: "63 pm",
+energiaioni: "760 kJ/mol",
+afinidadelec: "14 kJ/mol",
+numerrosdeoxida: "+7, +6, +4",
+electronegativity: "1.90",
+descripcion: "Uno de los elementos más raros en la corteza terrestre."
+            },
+      Os: {
+            name: "Osmio",
+numeroatomi: "76",
+configuracion: "[Xe] 4f¹⁴ 5d⁶ 6s²",
+categoria: "Metal de transición",
+radioatom: "135 pm",
+radiocov: "128 pm",
+radioioni: "63 pm",
+energiaioni: "840 kJ/mol",
+afinidadelec: "106 kJ/mol",
+numerrosdeoxida: "+8, +6, +4",
+electronegativity: "2.20",
+descripcion: "El metal más denso (22.59 g/cm³)."
+            },
+      Ir: {
+            name: "Iridio",
+numeroatomi: "77",
+configuracion: "[Xe] 4f¹⁴ 5d⁷ 6s²",
+categoria: "Metal de transición",
+radioatom: "136 pm",
+radiocov: "137 pm",
+radioioni: "68 pm",
+energiaioni: "880 kJ/mol",
+afinidadelec: "151 kJ/mol",
+numerrosdeoxida: "+4, +3",
+electronegativity: "2.20",
+descripcion: "Extremadamente resistente a la corrosión."
+            },
+      Pt: {
+            name: "Platino",
+numeroatomi: "78",
+configuracion: "[Xe] 4f¹⁴ 5d⁹ 6s¹",
+categoria: "Metal de transición",
+radioatom: "139 pm",
+radiocov: "128 pm",
+radioioni: "60 pm",
+energiaioni: "870 kJ/mol",
+afinidadelec: "205 kJ/mol",
+numerrosdeoxida: "+4, +2",
+electronegativity: "2.28",
+descripcion: "Metal precioso usado en catalizadores y joyería."
+            },
+      Au: {
+            name: "Oro",
+numeroatomi: "79",
+configuracion: "[Xe] 4f¹⁴ 5d¹⁰ 6s¹",
+categoria: "Metal de transición",
+radioatom: "144 pm",
+radiocov: "144 pm",
+radioioni: "137 pm",
+energiaioni: "890 kJ/mol",
+afinidadelec: "222.8 kJ/mol",
+numerrosdeoxida: "+3, +1",
+electronegativity: "2.54",
+descripcion: "Metal precioso altamente valorado en joyería."
+            },
+      Hg: {
+            name: "Mercurio",
+numeroatomi: "80",
+configuracion: "[Xe] 4f¹⁴ 5d¹⁰ 6s²",
+categoria: "Metal de transición",
+radioatom: "151 pm",
+radiocov: "149 pm",
+radioioni: "102 pm",
+energiaioni: "1007 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "+2, +1",
+electronegativity: "2.00",
+descripcion: "Único metal líquido a temperatura ambiente."
+            },
+      Tl: {
+            name: "Talio",
+numeroatomi: "81",
+configuracion: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹",
+categoria: "Metal",
+radioatom: "170 pm",
+radiocov: "148 pm",
+radioioni: "150 pm",
+energiaioni: "589 kJ/mol",
+afinidadelec: "19.2 kJ/mol",
+numerrosdeoxida: "+3, +1",
+electronegativity: "1.62",
+descripcion: "Altamente tóxico, usado en detectores infrarrojos."
+            },
+      Pb: {
+            name: "Plomo",
+numeroatomi: "82",
+configuracion: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²",
+categoria: "Metal",
+radioatom: "175 pm",
+radiocov: "147 pm",
+radioioni: "119 pm",
+energiaioni: "716 kJ/mol",
+afinidadelec: "35.1 kJ/mol",
+numerrosdeoxida: "+4, +2",
+electronegativity: "1.87",
+descripcion: "Metal pesado usado en baterías y blindajes."
+            },
+      Bi: {
+            name: "Bismuto",
+numeroatomi: "83",
+configuracion: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³",
+categoria: "Metal",
+radioatom: "160 pm",
+radiocov: "146 pm",
+radioioni: "103 pm",
+energiaioni: "703 kJ/mol",
+afinidadelec: "91.2 kJ/mol",
+numerrosdeoxida: "+5, +3",
+electronegativity: "2.02",
+descripcion: "El elemento natural más pesado no radioactivo."
+            },
+      Po: {
+            name: "Polonio",
+numeroatomi: "84",
+configuracion: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁴",
+categoria: "Metaloide",
+radioatom: "167 pm",
+radiocov: "140 pm",
+radioioni: "94 pm",
+energiaioni: "812 kJ/mol",
+afinidadelec: "183.3 kJ/mol",
+numerrosdeoxida: "+6, +4, +2",
+electronegativity: "2.00",
+descripcion: "Elemento altamente radioactivo y tóxico."
+            },
+      At: {
+            name: "Ástato",
+numeroatomi: "85",
+configuracion: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁵",
+categoria: "Halógeno",
+radioatom: "127 pm",
+radiocov: "147 pm",
+radioioni: "No especifico",
+energiaioni: "930 kJ/mol",
+afinidadelec: "270 kJ/mol",
+numerrosdeoxida: "+7, +5, +3, +1, -1",
+electronegativity: "2.20",
+descripcion: "El halógeno más raro y radioactivo."
+            },
+      Rn: {
+            name: "Radón",
+numeroatomi: "86",
+configuracion: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁶",
+categoria: "Gas noble",
+radioatom: "120 pm",
+radiocov: "145 pm",
+radioioni: "No especifico",
+energiaioni: "1037 kJ/mol",
+afinidadelec: "0 kJ/mol",
+numerrosdeoxida: "+6, +2",
+electronegativity: "No especifico",
+descripcion: "Gas noble radioactivo, peligroso en interiores."
+            },
+      Fr: {
+            name: "Francio",
+numeroatomi: "87",
+configuracion: "[Rn] 7s¹",
+categoria: "Metal alcalino",
+radioatom: "348 pm",
+radiocov: "260 pm",
+radioioni: "180 pm",
+energiaioni: "380 kJ/mol",
+afinidadelec: "44 kJ/mol",
+numerrosdeoxida: "+1",
+electronegativity: "0.70",
+descripcion: "El metal alcalino más pesado y radioactivo."
+            },
+      Ra: {
+            name: "Radio",
+numeroatomi: "88",
+configuracion: "[Rn] 7s²",
+categoria: "Metal alcalinotérreo",
+radioatom: "283 pm",
+radiocov: "221 pm",
+radioioni: "148 pm",
+energiaioni: "509 kJ/mol",
+afinidadelec: "9.65 kJ/mol",
+numerrosdeoxida: "+2",
+electronegativity: "0.89",
+descripcion: "Altamente radioactivo, usado en medicina antigua."
+            },
+      Ac: {
+            name: "Actinio",
+numeroatomi: "89",
+configuracion: "[Rn] 6d¹ 7s²",
+categoria: "Actínido",
+radioatom: "260 pm",
+radiocov: "215 pm",
+radioioni: "112 pm",
+energiaioni: "499 kJ/mol",
+afinidadelec: "33.77 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.10",
+descripcion: "Primer actínido, usado en generadores termoeléctricos."
+            },
+      Th: {
+            name: "Torio",
+numeroatomi: "90",
+configuracion: "[Rn] 6d² 7s²",
+categoria: "Actínido",
+radioatom: "237 pm",
+radiocov: "206 pm",
+radioioni: "108 pm",
+energiaioni: "587 kJ/mol",
+afinidadelec: "112.72 kJ/mol",
+numerrosdeoxida: "+4",
+electronegativity: "1.30",
+descripcion: "Combustible nuclear potencial, menos radioactivo que el uranio."
+            },
+      Pa: {
+            name: "Protactinio",
+numeroatomi: "91",
+configuracion: "[Rn] 5f² 6d¹ 7s²",
+categoria: "Actínido",
+radioatom: "243 pm",
+radiocov: "200 pm",
+radioioni: "104 pm",
+energiaioni: "568 kJ/mol",
+afinidadelec: "53.03 kJ/mol",
+numerrosdeoxida: "+5, +4",
+electronegativity: "1.50",
+descripcion: "Uno de los elementos más raros y caros."
+            },
+      U: {
+            name: "Uranio",
+numeroatomi: "92",
+configuracion: "[Rn] 5f³ 6d¹ 7s²",
+categoria: "Actínido",
+radioatom: "240 pm",
+radiocov: "196 pm",
+radioioni: "102 pm",
+energiaioni: "597.6 kJ/mol",
+afinidadelec: "50.94 kJ/mol",
+numerrosdeoxida: "+6, +4, +3",
+electronegativity: "1.38",
+descripcion: "Combustible principal para energía nuclear."
+            },
+      Np: {
+            name: "Neptunio",
+numeroatomi: "93",
+configuracion: "[Rn] 5f⁴ 6d¹ 7s²",
+categoria: "Actínido",
+radioatom: "221 pm",
+radiocov: "190 pm",
+radioioni: "101 pm",
+energiaioni: "604.5 kJ/mol",
+afinidadelec: "45.85 kJ/mol",
+numerrosdeoxida: "+6, +5, +4, +3",
+electronegativity: "1.36",
+descripcion: "Primer elemento transuránico sintetizado."
+            },
+      Pu: {
+            name: "Plutonio",
+numeroatomi: "94",
+configuracion: "[Rn] 5f⁶ 7s²",
+categoria: "Actínido",
+radioatom: "243 pm",
+radiocov: "187 pm",
+radioioni: "100 pm",
+energiaioni: "584.7 kJ/mol",
+afinidadelec: "-48.33 kJ/mol",
+numerrosdeoxida: "+7, +6, +5, +4, +3",
+electronegativity: "1.28",
+descripcion: "Usado en armas nucleares y reactores."
+            },
+      Am: {
+            name: "Americio",
+numeroatomi: "95",
+configuracion: "[Rn] 5f⁷ 7s²",
+categoria: "Actínido",
+radioatom: "244 pm",
+radiocov: "180 pm",
+radioioni: "97 pm",
+energiaioni: "578 kJ/mol",
+afinidadelec: "9.93 kJ/mol",
+numerrosdeoxida: "+6, +5, +4, +3",
+electronegativity: "1.30",
+descripcion: "Usado en detectores de humo."
+            },
+      Cm: {
+            name: "Curio",
+numeroatomi: "96",
+configuracion: "[Rn] 5f⁷ 6d¹ 7s²",
+categoria: "Actínido",
+radioatom: "245 pm",
+radiocov: "169 pm",
+radioioni: "96 pm",
+energiaioni: "581 kJ/mol",
+afinidadelec: "27.17 kJ/mol",
+numerrosdeoxida: "+4, +3",
+electronegativity: "1.30",
+descripcion: "Elemento altamente radioactivo, usado en investigación."
+            },
+      Bk: {
+            name: "Berkelio",
+numeroatomi: "97",
+configuracion: "[Rn] 5f⁹ 7s²",
+categoria: "Actínido",
+radioatom: "244 pm",
+radiocov: "No especifico",
+radioioni: "97 pm",
+energiaioni: "601 kJ/mol",
+afinidadelec: "-165.24 kJ/mol",
+numerrosdeoxida: "+4, +3",
+electronegativity: "1.30",
+descripcion: "Sintetizado en laboratorios, sin usos prácticos."
+            },
+      Cf: {
+            name: "Californio",
+numeroatomi: "98",
+configuracion: "[Rn] 5f¹⁰ 7s²",
+categoria: "Actínido",
+radioatom: "245 pm",
+radiocov: "No especifico",
+radioioni: "95 pm",
+energiaioni: "608 kJ/mol",
+afinidadelec: "-97.31 kJ/mol",
+numerrosdeoxida: "+4, +3, +2",
+electronegativity: "1.30",
+descripcion: "Usado en reactores nucleares y medicina."
+            },
+      Es: {
+            name: "Einstenio",
+numeroatomi: "99",
+configuracion: "[Rn] 5f¹¹ 7s²",
+categoria: "Actínido",
+radioatom: "245 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "619 kJ/mol",
+afinidadelec: "-28.6 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.30",
+descripcion: "Elemento sintético altamente radioactivo."
+            },
+      Fm: {
+            name: "Fermio",
+numeroatomi: "100",
+configuracion: "[Rn] 5f¹² 7s²",
+categoria: "Actínido",
+radioatom: "245 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "627 kJ/mol",
+afinidadelec: "33.96 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.30",
+descripcion: "Sintetizado en laboratorios, sin aplicaciones prácticas."
+            },
+      Md: {
+            name: "Mendelevio",
+numeroatomi: "101",
+configuracion: "[Rn] 5f¹³ 7s²",
+categoria: "Actínido",
+radioatom: "244 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "635 kJ/mol",
+afinidadelec: "93.91 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.30",
+descripcion: "Elemento sintético, solo producido en cantidades mínimas."
+            },
+      No: {
+            name: "Nobelio",
+numeroatomi: "102",
+configuracion: "[Rn] 5f¹⁴ 7s²",
+categoria: "Actínido",
+radioatom: "246 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "642 kJ/mol",
+afinidadelec: "-223.22 kJ/mol",
+numerrosdeoxida: "+3, +2",
+electronegativity: "1.30",
+descripcion: "Elemento sintético con isótopos de vida extremadamente corta."
+            },
+      Lr: {
+            name: "Lawrencio",
+numeroatomi: "103",
+configuracion: "[Rn] 5f¹⁴ 6d¹ 7s²",
+categoria: "Actínido",
+radioatom: "246 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "470 kJ/mol",
+afinidadelec: "-30.04 kJ/mol",
+numerrosdeoxida: "+3",
+electronegativity: "1.30",
+descripcion: "Último actínido, sintetizado en aceleradores de partículas."
+            },
+      Rf: {
+            name: "Rutherfordio",
+numeroatomi: "104",
+configuracion: "[Rn] 5f¹⁴ 6d² 7s²",
+categoria: "Metal de transición",
+radioatom: "150 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "580 kJ/mol",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+4",
+electronegativity: "No especifico",
+descripcion: "Primer elemento transactínido, altamente radioactivo."
+            },
+      Db: {
+            name: "Dubnio",
+numeroatomi: "105",
+configuracion: "[Rn] 5f¹⁴ 6d³ 7s²",
+categoria: "Metal de transición",
+radioatom: "149 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+5, +4, +3",
+electronegativity: "No especifico",
+descripcion: "Elemento sintético con propiedades químicas similares al tantalio."
+            },
+      Sg: {
+            name: "Seaborgio",
+numeroatomi: "106",
+configuracion: "[Rn] 5f¹⁴ 6d⁴ 7s²",
+categoria: "Metal de transición",
+radioatom: "143 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+6, +5, +4, +3",
+electronegativity: "No especifico",
+descripcion: "Elemento superpesado con isótopos de vida extremadamente corta."
+            },
+      Bh: {
+            name: "Bohrio",
+numeroatomi: "107",
+configuracion: "[Rn] 5f¹⁴ 6d⁵ 7s²",
+categoria: "Metal de transición",
+radioatom: "141 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+7, +5, +4, +3",
+electronegativity: "No especifico",
+descripcion: "Elemento sintético que probablemente sea metálico y sólido."
+            },
+      Hs: {
+            name: "Hassio",
+numeroatomi: "108",
+configuracion: "[Rn] 5f¹⁴ 6d⁶ 7s²",
+categoria: "Metal de transición",
+radioatom: "134 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+8, +6, +5, +4",
+electronegativity: "No especifico",
+descripcion: "Se espera que sea el metal más denso conocido (41 g/cm³ teórico)."
+            },
+      Mt: {
+            name: "Meitnerio",
+numeroatomi: "109",
+configuracion: "[Rn] 5f¹⁴ 6d⁷ 7s²",
+categoria: "Metal de transición",
+radioatom: "129 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+9, +8, +6, +4, +3, +1",
+electronegativity: "No especifico",
+descripcion: "Elemento extremadamente inestable, con solo unos pocos átomos producidos."
+            },
+      Ds: {
+            name: "Darmstadtio",
+numeroatomi: "110",
+configuracion: "[Rn] 5f¹⁴ 6d⁸ 7s²",
+categoria: "Metal de transición",
+radioatom: "128 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+8, +6, +4, +2, +0",
+electronegativity: "No especifico",
+descripcion: "Elemento superpesado que probablemente sea metálico y sólido."
+            },
+      Rg: {
+            name: "Roentgenio",
+numeroatomi: "111",
+configuracion: "[Rn] 5f¹⁴ 6d⁹ 7s²",
+categoria: "Metal de transición",
+radioatom: "121 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+5, +3, +1, -1",
+electronegativity: "No especifico",
+descripcion: "Se cree que podría ser líquido a temperatura ambiente."
+            },
+      Cn: {
+            name: "Copernicio",
+numeroatomi: "112",
+configuracion: "[Rn] 5f¹⁴ 6d¹⁰ 7s²",
+categoria: "Metal de transición",
+radioatom: "122 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+2, +1, +0",
+electronegativity: "No especifico",
+descripcion: "Posiblemente un metal líquido volátil a temperatura ambiente."
+            },
+      Nh: {
+            name: "Nihonio",
+numeroatomi: "113",
+configuracion: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p¹",
+categoria: "Metal",
+radioatom: "136 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+3, +1",
+electronegativity: "No especifico",
+descripcion: "Primer elemento sintético descubierto en Asia (Japón)."
+            },
+      Fl: {
+            name: "Flerovio",
+numeroatomi: "114",
+configuracion: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p²",
+categoria: "Metal",
+radioatom: "143 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+6, +4, +2, +0",
+electronegativity: "No especifico",
+descripcion: "Podría tener propiedades similares a los gases nobles."
+            },
+      Mc: {
+            name: "Moscovio",
+numeroatomi: "115",
+configuracion: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p³",
+categoria: "Metal",
+radioatom: "162 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+3, +1",
+electronegativity: "No especifico",
+descripcion: "Elemento superpesado con isótopos de vida extremadamente corta."
+            },
+      Lv: {
+            name: "Livermorio",
+numeroatomi: "116",
+configuracion: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁴",
+categoria: "Metal",
+radioatom: "157 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+4, +2, +0",
+electronegativity: "No especifico",
+descripcion: "Se espera que sea un metal volátil con propiedades similares al polonio."
+            },
+      Ts: {
+            name: "Teneso",
+numeroatomi: "117",
+configuracion: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁵",
+categoria: "Halógeno",
+radioatom: "138 pm",
+radiocov: "No especifico",
+radioioni: "No especifico",
+energiaioni: "No especifico",
+afinidadelec: "No especifico",
+numerrosdeoxida: "+5, +3, +1, -1",
+electronegativity: "No especifico",
+descripcion: "Segundo elemento sintético más pesado conocido (2010)."
+            },
+      Og: { 
+        name: "Oganesón", 
+numeroatomi: 118,
+configuracion: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁶",
+categoria: "Gas noble",
+radioatom: "Estimado 152 pm",
+radiocov:"No especifico",
+radioioni:"No especifico",
+energiaioni:"No especifico",
+afinidadelec:"No especifico",
+numerrosdeoxida:"No especifico",
+electronegativity: "No especifico",
+descripcion: "El oganesón es un elemento sintético superpesado. Su existencia confirma la teoría de la isla de estabilidad en elementos pesados."
+      }
+    };
+
+    /*IDENTIFICADORES DE LA INFORMACION DE LOS ELEMENTOS*/
+    function showInfo(symbol) {
+      const element = elementData[symbol];
+      if (!element) return;
+      
+      document.getElementById('descripcion').textContent = element.descripcion;
+      document.getElementById('element-name').textContent = element.name;
+      document.getElementById('numeroatomi').textContent = element.numeroatomi;
+      document.getElementById('configuracion').textContent = element.configuracion;
+      document.getElementById('categoria').textContent = element.categoria;
+      document.getElementById('radioatom').textContent = element.radioatom;
+      document.getElementById('radiocov').textContent = element.radiocov;
+      document.getElementById('radioioni').textContent = element.radioioni;
+      document.getElementById('energiaioni').textContent = element.energiaioni;
+      document.getElementById('afinidadelec').textContent = element.afinidadelec;
+      document.getElementById('numerrosdeoxida').textContent = element.numerrosdeoxida;
+      document.getElementById('electronegativity').textContent = element.electronegativity;
+    }
+    // Crear partículas de fondo
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 50;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 6 + 's';
+        particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Funciones de control
+function showAllElements() {
+    document.querySelectorAll('.element').forEach(el => {
+        el.style.opacity = '1';
+        el.classList.remove('special');
+    });
+    updateActiveButton(0);
+}
+
+function highlightMetals() {
+    document.querySelectorAll('.element').forEach(el => {
+        if (el.classList.contains('metal') || el.classList.contains('alcalino') || 
+            el.classList.contains('alcalinoterreo') || el.classList.contains('transicion')) {
+            el.style.opacity = '1';
+            el.classList.add('special');
+        } else {
+            el.style.opacity = '0.3';
+            el.classList.remove('special');
+        }
+    });
+    updateActiveButton(1);
+}
+
+function highlightNonMetals() {
+    document.querySelectorAll('.element').forEach(el => {
+        if (el.classList.contains('no-metal')) {
+            el.style.opacity = '1';
+            el.classList.add('special');
+        } else {
+            el.style.opacity = '0.3';
+            el.classList.remove('special');
+        }
+    });
+    updateActiveButton(2);
+}
+
+function highlightNobleGases() {
+    document.querySelectorAll('.element').forEach(el => {
+        if (el.classList.contains('gas-noble')) {
+            el.style.opacity = '1';
+            el.classList.add('special');
+        } else {
+            el.style.opacity = '0.3';
+            el.classList.remove('special');
+        }
+    });
+    updateActiveButton(3);
+}
+
+function updateActiveButton(index) {
+    document.querySelectorAll('.control-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+    });
+}
+
+// Inicializar cuando cargue la página
+document.addEventListener('DOMContentLoaded', function() {
+    createParticles();
+    
+    // Añadir efectos de hover mejorados
+    document.querySelectorAll('.element').forEach(element => {
+        element.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.05) rotateY(5deg)';
+        });
+        
+        element.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1) rotateY(0deg)';
+        });
+    });
+});
+  </script>
+  <!-- Chatbot deslizable -->
+<div class="chatbot-slide" id="chatbot-slide">
+    <div class="chatbot-toggle" onclick="toggleChatbot()">
+        <i class="fas fa-robot"></i>
+    </div>
+    <div style="padding: 1rem; border-bottom: 1px solid #eee; background-color: var(--color-primary); color: white;">
+        <h3><i class="fas fa-robot"></i> Asistente de Química</h3>
+    </div>
+    <div id="chat-messages" style="height: calc(80vh - 120px); overflow-y: auto; padding: 1rem;">
+        <div style="background-color: #f0f0f0; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem;">
+            ¡Hola! Soy tu asistente de química especializado en la tabla periódica. ¿Qué elemento te interesa conocer?
+        </div>
+    </div>
+    <div style="padding: 1rem; border-top: 1px solid #eee;">
+        <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="chat-input" placeholder="Pregunta sobre algún elemento..." style="flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <button id="chat-send" style="padding: 0.5rem 1rem; background-color: var(--color-primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Funciones del chatbot
+function toggleChatbot() {
+    document.getElementById('chatbot-slide').classList.toggle('active');
+}
+
+async function getBotResponse(userMessage) {
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCxUIXXKwR4dV9k3uzf4v2Tq592kaToP3g`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `Eres un asistente educativo especializado en química y la tabla periódica. Responde solo preguntas relacionadas con química de manera educativa y clara. El usuario está viendo una tabla periódica interactiva. Pregunta del usuario: ${userMessage}`
+                    }]
+                }]
+            })
+        });
+        
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
+    } catch (error) {
+        return 'Lo siento, no puedo conectarme en este momento. ¿Podrías reformular tu pregunta sobre química?';
+    }
+}
+
+function addMessage(message, isUser = false) {
+    const messagesContainer = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.style.cssText = `
+        background-color: ${isUser ? 'var(--color-primary)' : '#f0f0f0'};
+        color: ${isUser ? 'white' : 'black'};
+        padding: 0.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        margin-left: ${isUser ? '2rem' : '0'};
+        margin-right: ${isUser ? '0' : '2rem'};
+    `;
+    messageDiv.textContent = message;
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+document.getElementById('chat-send').addEventListener('click', async function() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    
+    if (message) {
+        addMessage(message, true);
+        input.value = '';
+        
+        const response = await getBotResponse(message);
+        addMessage(response);
+    }
+});
+
+document.getElementById('chat-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('chat-send').click();
+    }
+});
+
+// Animaciones adicionales al cargar
+document.addEventListener('DOMContentLoaded', function() {
+    // Animar elementos de la tabla con delay
+    const elements = document.querySelectorAll('.element');
+    elements.forEach((element, index) => {
+        element.style.animationDelay = `${index * 0.02}s`;
+    });
+});
+</script>
+</body>
+</html>

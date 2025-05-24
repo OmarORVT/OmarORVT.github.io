@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Línea del Tiempo - Tabla Periódica</title>
+    <link rel="stylesheet" href="CSS/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .timeline-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 1200px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .timeline-title {
+            text-align: center;
+            color: var(--color-primary);
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .timeline-image {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-description {
+            text-align: center;
+            color: var(--color-text);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .highlight-card {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .highlight-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .highlight-year {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .highlight-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .highlight-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .timeline-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+            
+            .timeline-title {
+                font-size: 2rem;
+            }
+            
+            .timeline-highlights {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="contenedor">
+            <nav class="menu">
+                <a href="index.html"><b>Inicio</b></a>
+                <a href="indexT1.html"><b>Tema 1</b></a>
+                <a href="indexT2.html"><b>Tema 2</b></a>
+                <a href="Tabla.html"><b>Tabla Periódica</b></a>
+                <a href="cuestionario-tema1.html"><b>Cuestionario T1</b></a>
+                <a href="cuestionario-tema2.html"><b>Cuestionario T2</b></a>
+                <a href="chatbot.html"><b>Chatbot</b></a>
+                <a href="lineadeltiempo.html"><b>Línea del Tiempo</b></a>
+            </nav>
+            <div class="contenido-header">
+                <h1 class="titulo-header"><b>LÍNEA DEL TIEMPO</b></h1>
+                <samp class="linea-header"></samp>
+                <h2 class="texto-header">
+                    Descubre la fascinante historia de la tabla periódica<br>
+                    desde sus primeros descubrimientos hasta la actualidad
+                </h2>
+                <a href="Tabla.html" class="action-header"><b>Ver Tabla Periódica</b></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="timeline-container">
+            <h2 class="timeline-title">Historia de la Tabla Periódica</h2>
+            
+            <div class="timeline-description">
+                <p>La tabla periódica es uno de los logros más importantes de la ciencia, resultado de siglos de investigación y descubrimientos. Desde el primer elemento identificado hasta los elementos sintéticos más recientes, cada hito ha contribuido a nuestra comprensión actual de la materia.</p>
+            </div>
+            
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Gr%C3%A1fico%20de%20L%C3%ADnea%20de%20Tiempo%20Progreso%20Profesional%20Moderno%20Multicolor-thQfHhmUsvDvRFQZ4njWVeBwcA4J4O.png" alt="Línea del Tiempo de la Tabla Periódica" class="timeline-image">
+            
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+          <!-- CONTACTO -->
+          <div class="contact-info">
+            <h3>Contacto</h3>
+            <p><strong>Teléfono:</strong> +52 123 456 7890</p>
+            <p><strong>Email:</strong> contrreo@hacer.com</p>
+            <p><strong>Dirección:</strong> TECNM, H. Matamoros</p>
+          </div>
+      
+          <!-- Columna de Redes Sociales -->
+          <div class="social-media">
+            <h3>Síguenos</h3>
+            <ul class="social-links">
+              <li><a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i> Facebook</a></li>
+              <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
+              <li><a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i> Twitter</a></li>
+            </ul>
+          </div>
+      
+          <!-- Columna de Enlaces Rápidos -->
+          <div class="quick-links">
+            <h3>Autores</h3>
+            <ul>
+              <li>Andrade Zertuche Carlos Alberto</li>
+              <li>Campos Guillermo Ulises Daniel</li>
+              <li>Covarruvias Ramírez Ricardo Daniel</li>
+              <li>Curiel Román Omar</li>
+              <li>Segura Lopez Estefanie</li>
+              <li>Villanueva Martinez Alfredo</li>
+            </ul>
+          </div>
+      
+          <!-- Formulario de Contacto -->
+          <div class="contact-form">
+            <h3>Envíanos un mensaje</h3>
+            <form action="" class="formulario" method="POST">
+              <input type="text" placeholder="Nombre" id="nombre" name="nombre" required>
+              <input type="email" placeholder="Correo" id="correo" name="correo" required>
+              <textarea name="mensaje" id="mensaje" placeholder="Mensaje"></textarea>
+              <button class="boton" type="submit">Contactar</button>
+            </form>
+          </div>
+        </div>
+      
+        <!-- Pie de Página -->
+        <div class="footer-bottom">
+          <p>&copy; 2025.Todos los derechos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

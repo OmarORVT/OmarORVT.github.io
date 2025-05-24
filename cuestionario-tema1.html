@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario Tema 1 - Química</title>
+    <link rel="stylesheet" href="CSS/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .quiz-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .question {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            animation: fadeInUp 0.5s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        .question:hover {
+            transform: translateX(5px);
+            box-shadow: -4px 0 0 var(--color-secondary);
+        }
+        
+        .question h3 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .options li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .options label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.8rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .options label:hover {
+            background-color: var(--color-secondary);
+            color: white;
+            transform: translateX(10px);
+        }
+        
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 2rem auto;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(44, 120, 115, 0.3);
+        }
+        
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Modal de resultados */
+        .results-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .results-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: pulse 0.6s ease-out;
+        }
+
+        .results-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .result-btn {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .review-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .retry-btn {
+            background-color: var(--color-secondary);
+            color: white;
+        }
+
+        .topic-btn {
+            background-color: var(--color-accent);
+            color: white;
+        }
+
+        .result-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Chatbot deslizable */
+        .chatbot-slide {
+            position: fixed;
+            top: 50%;
+            right: -350px;
+            transform: translateY(-50%);
+            width: 350px;
+            height: 80vh;
+            background-color: white;
+            border-radius: 12px 0 0 12px;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            transition: right 0.4s ease;
+        }
+
+        .chatbot-slide.active {
+            right: 0;
+        }
+
+        .chatbot-toggle {
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 80px;
+            background-color: var(--color-primary);
+            border-radius: 8px 0 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .chatbot-toggle:hover {
+            background-color: var(--color-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .results-buttons {
+                flex-direction: column;
+            }
+            
+            .chatbot-slide {
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="contenedor">
+            <nav class="menu">
+                <a href="index.html"><b>Inicio</b></a>
+                <a href="indexT1.html"><b>Tema 1</b></a>
+                <a href="indexT2.html"><b>Tema 2</b></a>
+                <a href="Tabla.html"><b>Tabla Periódica</b></a>
+                <a href="cuestionario-tema1.html"><b>Cuestionario T1</b></a>
+                <a href="cuestionario-tema2.html"><b>Cuestionario T2</b></a>
+                <a href="chatbot.html"><b>Chatbot</b></a>
+            </nav>
+            <div class="contenido-header">
+                <h1 class="titulo-header"><b>CUESTIONARIO TEMA 1</b></h1>
+                <samp class="linea-header"></samp>
+                <h2 class="texto-header">
+                    Pon a prueba tus conocimientos sobre el átomo y la teoría cuántica
+                </h2>
+                <a href="indexT1.html" class="action-header"><b>Volver al Tema 1</b></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="quiz-container">
+            <h2>Cuestionario: El Átomo y la Teoría Cuántica</h2>
+            <form id="quiz-form">
+                <div class="question" id="q1">
+                    <h3>1. ¿Cuáles son las partículas subatómicas principales?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q1" value="a">
+                                Protones, neutrones y fotones
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q1" value="b">
+                                Protones, neutrones y electrones
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q1" value="c">
+                                Electrones, fotones y quarks
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q1" value="d">
+                                Neutrones, fotones y mesones
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q1"></div>
+                </div>
+
+                <div class="question" id="q2">
+                    <h3>2. ¿Quién descubrió el efecto fotoeléctrico?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q2" value="a">
+                                Max Planck
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q2" value="b">
+                                Niels Bohr
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q2" value="c">
+                                Heinrich Hertz
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q2" value="d">
+                                Werner Heisenberg
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q2"></div>
+                </div>
+
+                <div class="question" id="q3">
+                    <h3>3. ¿Qué establece el principio de incertidumbre de Heisenberg?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q3" value="a">
+                                No se pueden conocer simultáneamente con precisión la posición y el momento de una partícula
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q3" value="b">
+                                La energía solo puede ser absorbida o liberada en cantidades discretas llamadas cuantos
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q3" value="c">
+                                Los electrones se mueven en órbitas circulares alrededor del núcleo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q3" value="d">
+                                Las partículas tienen propiedades tanto de onda como de partícula
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q3"></div>
+                </div>
+
+                <div class="question" id="q4">
+                    <h3>4. ¿Qué postula el principio de dualidad onda-partícula de De Broglie?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q4" value="a">
+                                Los electrones solo pueden existir en ciertos niveles de energía
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q4" value="b">
+                                La energía está cuantizada en pequeños paquetes
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q4" value="c">
+                                Todas las partículas exhiben propiedades tanto de onda como de partícula
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q4" value="d">
+                                Los electrones tienen un momento angular cuantizado
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q4"></div>
+                </div>
+
+                <div class="question" id="q5">
+                    <h3>5. ¿Qué describe la ecuación de Schrödinger?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q5" value="a">
+                                La relación entre masa y energía
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q5" value="b">
+                                La evolución temporal de la función de onda de un sistema cuántico
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q5" value="c">
+                                La relación entre la longitud de onda y el momento de una partícula
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q5" value="d">
+                                La relación entre la frecuencia y la energía de un fotón
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q5"></div>
+                </div>
+
+                <div class="question" id="q6">
+                    <h3>6. ¿Quién propuso el modelo atómico que incluye órbitas circulares con niveles de energía específicos?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q6" value="a">
+                                John Dalton
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q6" value="b">
+                                J.J. Thomson
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q6" value="c">
+                                Ernest Rutherford
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q6" value="d">
+                                Niels Bohr
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q6"></div>
+                </div>
+
+                <div class="question" id="q7">
+                    <h3>7. ¿Qué científico descubrió la radiactividad?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q7" value="a">
+                                Marie Curie
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q7" value="b">
+                                Henri Becquerel
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q7" value="c">
+                                Wilhelm Röntgen
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q7" value="d">
+                                Ernest Rutherford
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q7"></div>
+                </div>
+
+                <div class="question" id="q8">
+                    <h3>8. ¿Qué tipo de radiación tiene mayor poder de penetración?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q8" value="a">
+                                Radiación alfa (α)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q8" value="b">
+                                Radiación beta (β)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q8" value="c">
+                                Radiación gamma (γ)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q8" value="d">
+                                Todas tienen el mismo poder de penetración
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q8"></div>
+                </div>
+
+                <div class="question" id="q9">
+                    <h3>9. ¿Qué fenómeno explicó Einstein en 1905 que le valió el Premio Nobel de Física?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q9" value="a">
+                                La teoría de la relatividad
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q9" value="b">
+                                El efecto fotoeléctrico
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q9" value="c">
+                                El movimiento browniano
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q9" value="d">
+                                La equivalencia masa-energía (E=mc²)
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q9"></div>
+                </div>
+
+                <div class="question" id="q10">
+                    <h3>10. ¿Qué científico propuso que la energía está cuantizada en pequeños paquetes llamados cuantos?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q10" value="a">
+                                Max Planck
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q10" value="b">
+                                Albert Einstein
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q10" value="c">
+                                Niels Bohr
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q10" value="d">
+                                Erwin Schrödinger
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q10"></div>
+                </div>
+
+                <div class="question" id="q11">
+                    <h3>11. ¿Qué establece el principio de exclusión de Pauli?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q11" value="a">
+                                Los electrones se distribuyen para maximizar el número de electrones con espines paralelos
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q11" value="b">
+                                Dos electrones en un átomo no pueden tener los mismos cuatro números cuánticos
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q11" value="c">
+                                Los electrones llenan los orbitales de menor energía antes de pasar a los de mayor energía
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q11" value="d">
+                                La energía de un electrón en un átomo está cuantizada
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q11"></div>
+                </div>
+
+                <div class="question" id="q12">
+                    <h3>12. ¿Qué número cuántico describe la forma de un orbital atómico?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q12" value="a">
+                                Número cuántico principal (n)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q12" value="b">
+                                Número cuántico azimutal (l)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q12" value="c">
+                                Número cuántico magnético (m)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q12" value="d">
+                                Número cuántico de espín (s)
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q12"></div>
+                </div>
+
+                <div class="question" id="q13">
+                    <h3>13. ¿Qué experimento demostró que los átomos tienen un núcleo pequeño y denso?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q13" value="a">
+                                Experimento de la doble rendija de Young
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q13" value="b">
+                                Experimento de Millikan
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q13" value="c">
+                                Experimento de la lámina de oro de Rutherford
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q13" value="d">
+                                Experimento de Stern-Gerlach
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q13"></div>
+                </div>
+
+                <div class="question" id="q14">
+                    <h3>14. ¿Qué establece el principio de Hund?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q14" value="a">
+                                Los electrones llenan los orbitales de menor energía antes de pasar a los de mayor energía
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q14" value="b">
+                                Dos electrones en un átomo no pueden tener los mismos cuatro números cuánticos
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q14" value="c">
+                                Los electrones se distribuyen para maximizar el número de electrones con espines paralelos
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q14" value="d">
+                                La energía de un electrón en un átomo está cuantizada
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q14"></div>
+                </div>
+
+                <div class="question" id="q15">
+                    <h3>15. ¿Qué significa físicamente el cuadrado de la función de onda (Ψ²)?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q15" value="a">
+                                La energía del electrón
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q15" value="b">
+                                La densidad de probabilidad de encontrar el electrón en un punto del espacio
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q15" value="c">
+                                La velocidad del electrón
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q15" value="d">
+                                El momento angular del electrón
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q15"></div>
+                </div>
+
+                <button type="button" id="submit-btn" class="submit-btn">
+                    <i class="fas fa-check"></i> Verificar Respuestas
+                </button>
+                <div id="score" style="margin-top: 2rem; font-weight: bold;"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chatbot deslizable -->
+    <div class="chatbot-slide" id="chatbot-slide">
+        <div class="chatbot-toggle" onclick="toggleChatbot()">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div style="padding: 1rem; border-bottom: 1px solid #eee; background-color: var(--color-primary); color: white;">
+            <h3><i class="fas fa-robot"></i> Asistente de Química</h3>
+        </div>
+        <div id="chat-messages" style="height: calc(80vh - 120px); overflow-y: auto; padding: 1rem;">
+            <div style="background-color: #f0f0f0; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                ¡Hola! Estoy aquí para ayudarte con preguntas sobre el átomo y la teoría cuántica. ¿Necesitas ayuda con algún concepto?
+            </div>
+        </div>
+        <div style="padding: 1rem; border-top: 1px solid #eee;">
+            <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="chat-input" placeholder="Escribe tu pregunta..." style="flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                <button id="chat-send" style="padding: 0.5rem 1rem; background-color: var(--color-primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+          <!-- CONTACTO -->
+          <div class="contact-info">
+            <h3>Contacto</h3>
+            <p><strong>Teléfono:</strong> +52 123 456 7890</p>
+            <p><strong>Email:</strong> contrreo@hacer.com</p>
+            <p><strong>Dirección:</strong> TECNM, H. Matamoros</p>
+          </div>
+      
+          <!-- Columna de Redes Sociales -->
+          <div class="social-media">
+            <h3>Síguenos</h3>
+            <ul class="social-links">
+              <li><a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i> Facebook</a></li>
+              <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
+              <li><a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i> Twitter</a></li>
+            </ul>
+          </div>
+      
+          <!-- Columna de Enlaces Rápidos -->
+          <div class="quick-links">
+            <h3>Autores</h3>
+            <ul>
+              <li>Andrade Zertuche Carlos Alberto</li>
+              <li>Campos Guillermo Ulises Daniel</li>
+              <li>Covarruvias Ramírez Ricardo Daniel</li>
+              <li>Curiel Román Omar</li>
+              <li>Segura Lopez Estefanie</li>
+              <li>Villanueva Martinez Alfredo</li>
+            </ul>
+          </div>
+      
+          <!-- Formulario de Contacto -->
+          <div class="contact-form">
+            <h3>Envíanos un mensaje</h3>
+            <form action="" class="formulario" method="POST">
+              <input type="text" placeholder="Nombre" id="nombre" name="nombre" required>
+              <input type="email" placeholder="Correo" id="correo" name="correo" required>
+              <textarea name="mensaje" id="mensaje" placeholder="Mensaje"></textarea>
+              <button class="boton" type="submit">Contactar</button>
+            </form>
+          </div>
+        </div>
+      
+        <!-- Pie de Página -->
+        <div class="footer-bottom">
+          <p>&copy; 2025.Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quizForm = document.getElementById('quiz-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const scoreDiv = document.getElementById('score');
+            
+            // Respuestas correctas
+            const correctAnswers = {
+                q1: 'b',
+                q2: 'c',
+                q3: 'a',
+                q4: 'c',
+                q5: 'b',
+                q6: 'd',
+                q7: 'b',
+                q8: 'c',
+                q9: 'b',
+                q10: 'a',
+                q11: 'b',
+                q12: 'b',
+                q13: 'c',
+                q14: 'c',
+                q15: 'b'
+            };
+            
+            // Explicaciones
+            const explanations = {
+                q1: {
+                    correct: 'Correcto. Las principales partículas subatómicas son los protones (carga positiva), neutrones (sin carga) y electrones (carga negativa).',
+                    incorrect: 'Incorrecto. Las principales partículas subatómicas son los protones, neutrones y electrones.'
+                },
+                q2: {
+                    correct: 'Correcto. Heinrich Hertz descubrió el efecto fotoeléctrico en 1887, aunque fue Einstein quien lo explicó en 1905.',
+                    incorrect: 'Incorrecto. El efecto fotoeléctrico fue descubierto por Heinrich Hertz en 1887.'
+                },
+                q3: {
+                    correct: 'Correcto. El principio de incertidumbre establece que no se pueden conocer simultáneamente con precisión la posición y el momento de una partícula.',
+                    incorrect: 'Incorrecto. El principio de incertidumbre establece que no se pueden conocer simultáneamente con precisión la posición y el momento de una partícula.'
+                },
+                q4: {
+                    correct: 'Correcto. El principio de dualidad onda-partícula postula que todas las partículas exhiben propiedades tanto de onda como de partícula.',
+                    incorrect: 'Incorrecto. El principio de dualidad onda-partícula postula que todas las partículas exhiben propiedades tanto de onda como de partícula.'
+                },
+                q5: {
+                    correct: 'Correcto. La ecuación de Schrödinger describe la evolución temporal de la función de onda de un sistema cuántico.',
+                    incorrect: 'Incorrecto. La ecuación de Schrödinger describe la evolución temporal de la función de onda de un sistema cuántico.'
+                },
+                q6: {
+                    correct: 'Correcto. Niels Bohr propuso en 1913 un modelo atómico con órbitas circulares y niveles de energía específicos.',
+                    incorrect: 'Incorrecto. Niels Bohr propuso en 1913 un modelo atómico con órbitas circulares y niveles de energía específicos.'
+                },
+                q7: {
+                    correct: 'Correcto. Henri Becquerel descubrió la radiactividad en 1896 mientras estudiaba las sales de uranio.',
+                    incorrect: 'Incorrecto. Henri Becquerel descubrió la radiactividad en 1896 mientras estudiaba las sales de uranio.'
+                },
+                q8: {
+                    correct: 'Correcto. La radiación gamma (γ) tiene el mayor poder de penetración, seguida por la radiación beta (β) y luego la radiación alfa (α).',
+                    incorrect: 'Incorrecto. La radiación gamma (γ) tiene el mayor poder de penetración, seguida por la radiación beta (β) y luego la radiación alfa (α).'
+                },
+                q9: {
+                    correct: 'Correcto. Einstein recibió el Premio Nobel de Física en 1921 por su explicación del efecto fotoeléctrico, no por su teoría de la relatividad.',
+                    incorrect: 'Incorrecto. Einstein recibió el Premio Nobel de Física en 1921 por su explicación del efecto fotoeléctrico, no por su teoría de la relatividad.'
+                },
+                q10: {
+                    correct: 'Correcto. Max Planck propuso en 1900 que la energía está cuantizada en pequeños paquetes llamados cuantos.',
+                    incorrect: 'Incorrecto. Max Planck propuso en 1900 que la energía está cuantizada en pequeños paquetes llamados cuantos.'
+                },
+                q11: {
+                    correct: 'Correcto. El principio de exclusión de Pauli establece que dos electrones en un átomo no pueden tener los mismos cuatro números cuánticos.',
+                    incorrect: 'Incorrecto. El principio de exclusión de Pauli establece que dos electrones en un átomo no pueden tener los mismos cuatro números cuánticos.'
+                },
+                q12: {
+                    correct: 'Correcto. El número cuántico azimutal (l) describe la forma del orbital atómico (s, p, d, f).',
+                    incorrect: 'Incorrecto. El número cuántico azimutal (l) describe la forma del orbital atómico (s, p, d, f).'
+                },
+                q13: {
+                    correct: 'Correcto. El experimento de la lámina de oro de Rutherford demostró que los átomos tienen un núcleo pequeño y denso.',
+                    incorrect: 'Incorrecto. El experimento de la lámina de oro de Rutherford demostró que los átomos tienen un núcleo pequeño y denso.'
+                },
+                q14: {
+                    correct: 'Correcto. El principio de Hund establece que los electrones se distribuyen para maximizar el número de electrones con espines paralelos antes de emparejarse.',
+                    incorrect: 'Incorrecto. El principio de Hund establece que los electrones se distribuyen para maximizar el número de electrones con espines paralelos antes de emparejarse.'
+                },
+                q15: {
+                    correct: 'Correcto. El cuadrado de la función de onda (Ψ²) representa la densidad de probabilidad de encontrar el electrón en un punto del espacio.',
+                    incorrect: 'Incorrecto. El cuadrado de la función de onda (Ψ²) representa la densidad de probabilidad de encontrar el electrón en un punto del espacio.'
+                }
+            };
+
+            // Funciones del modal de resultados
+            function showResultsModal(score, total) {
+                const modal = document.createElement('div');
+                modal.className = 'results-modal';
+                modal.id = 'results-modal';
+                
+                const isSuccess = score === total;
+                const percentage = Math.round((score / total) * 100);
+                
+                modal.innerHTML = `
+                    <div class="results-content">
+                        <h2 style="color: ${isSuccess ? 'var(--color-secondary)' : '#e74c3c'}; text-align: center;">
+                            ${isSuccess ? '¡Felicitaciones! 🎉' : 'Resultados'}
+                        </h2>
+                        <div style="text-align: center; margin: 2rem 0;">
+                            <div style="font-size: 3rem; font-weight: bold; color: var(--color-primary);">
+                                ${score}/${total}
+                            </div>
+                            <div style="font-size: 1.2rem; margin-top: 0.5rem;">
+                                ${percentage}% de aciertos
+                            </div>
+                            <p style="margin-top: 1rem;">
+                                ${isSuccess ? 
+                                    '¡Excelente trabajo! Has dominado completamente este tema del átomo y la teoría cuántica.' : 
+                                    'Buen intento. Revisa las respuestas incorrectas para mejorar tu comprensión del átomo y la teoría cuántica.'}
+                            </p>
+                        </div>
+                        <div class="results-buttons">
+                            <button class="result-btn review-btn" onclick="reviewAnswers()">
+                                <i class="fas fa-search"></i> Ver Respuestas
+                            </button>
+                            <button class="result-btn retry-btn" onclick="retryQuiz()">
+                                <i class="fas fa-redo"></i> Reintentar
+                            </button>
+                            <button class="result-btn topic-btn" onclick="goToTopic()">
+                                <i class="fas fa-book"></i> Ver Tema
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                modal.style.display = 'block';
+            }
+
+            window.reviewAnswers = function() {
+                document.getElementById('results-modal').style.display = 'none';
+                document.querySelectorAll('.result').forEach(result => {
+                    result.style.display = 'block';
+                });
+                document.querySelector('.quiz-container').scrollIntoView({ behavior: 'smooth' });
+            };
+
+            window.retryQuiz = function() {
+                location.reload();
+            };
+
+            window.goToTopic = function() {
+                window.location.href = 'indexT1.html';
+            };
+
+            // Funciones del chatbot
+            window.toggleChatbot = function() {
+                document.getElementById('chatbot-slide').classList.toggle('active');
+            };
+
+            async function getBotResponse(userMessage) {
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCxUIXXKwR4dV9k3uzf4v2Tq592kaToP3g`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: `Eres un asistente educativo especializado en química. Responde solo preguntas relacionadas con química de manera educativa y clara. Enfócate en el tema del átomo y la teoría cuántica si es relevante. El usuario está realizando un cuestionario sobre el átomo y la teoría cuántica. Pregunta del usuario: ${userMessage}`
+                                }]
+                            }]
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    return data.candidates[0].content.parts[0].text;
+                } catch (error) {
+                    return 'Lo siento, no puedo conectarme en este momento. ¿Podrías reformular tu pregunta sobre química?';
+                }
+            }
+
+            function addMessage(message, isUser = false) {
+                const messagesContainer = document.getElementById('chat-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.style.cssText = `
+                    background-color: ${isUser ? 'var(--color-primary)' : '#f0f0f0'};
+                    color: ${isUser ? 'white' : 'black'};
+                    padding: 0.5rem;
+                    border-radius: 8px;
+                    margin-bottom: 1rem;
+                    margin-left: ${isUser ? '2rem' : '0'};
+                    margin-right: ${isUser ? '0' : '2rem'};
+                `;
+                messageDiv.textContent = message;
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            document.getElementById('chat-send').addEventListener('click', async function() {
+                const input = document.getElementById('chat-input');
+                const message = input.value.trim();
+                
+                if (message) {
+                    addMessage(message, true);
+                    input.value = '';
+                    
+                    const response = await getBotResponse(message);
+                    addMessage(response);
+                }
+            });
+
+            document.getElementById('chat-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('chat-send').click();
+                }
+            });
+            
+            submitBtn.addEventListener('click', function() {
+                let score = 0;
+                
+                // Verificar cada pregunta
+                for (let i = 1; i <= 15; i++) {
+                    const questionName = 'q' + i;
+                    const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+                    const resultDiv = document.getElementById(`result-${questionName}`);
+                    
+                    if (selectedOption) {
+                        const userAnswer = selectedOption.value;
+                        
+                        if (userAnswer === correctAnswers[questionName]) {
+                            score++;
+                            resultDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${explanations[questionName].correct}`;
+                            resultDiv.className = 'result correct';
+                        } else {
+                            resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> ${explanations[questionName].incorrect}`;
+                            resultDiv.className = 'result incorrect';
+                        }
+                    } else {
+                        resultDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> No has seleccionado ninguna respuesta. ${explanations[questionName].incorrect}`;
+                        resultDiv.className = 'result incorrect';
+                    }
+                }
+                
+                // Mostrar modal de resultados
+                showResultsModal(score, 15);
+                submitBtn.style.display = 'none';
+            });
+
+            // Animaciones para las preguntas
+            document.querySelectorAll('.question').forEach((question, index) => {
+                question.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

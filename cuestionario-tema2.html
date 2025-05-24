@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario Tema 2 - Química</title>
+    <link rel="stylesheet" href="CSS/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .quiz-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .question {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            animation: fadeInUp 0.5s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        .question:hover {
+            transform: translateX(5px);
+            box-shadow: -4px 0 0 var(--color-secondary);
+        }
+        
+        .question h3 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .options li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .options label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.8rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .options label:hover {
+            background-color: var(--color-secondary);
+            color: white;
+            transform: translateX(10px);
+        }
+        
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 2rem auto;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(44, 120, 115, 0.3);
+        }
+        
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Modal de resultados */
+        .results-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .results-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: pulse 0.6s ease-out;
+        }
+
+        .results-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .result-btn {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .review-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .retry-btn {
+            background-color: var(--color-secondary);
+            color: white;
+        }
+
+        .topic-btn {
+            background-color: var(--color-accent);
+            color: white;
+        }
+
+        .result-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Chatbot deslizable */
+        .chatbot-slide {
+            position: fixed;
+            top: 50%;
+            right: -350px;
+            transform: translateY(-50%);
+            width: 350px;
+            height: 80vh;
+            background-color: white;
+            border-radius: 12px 0 0 12px;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            transition: right 0.4s ease;
+        }
+
+        .chatbot-slide.active {
+            right: 0;
+        }
+
+        .chatbot-toggle {
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 80px;
+            background-color: var(--color-primary);
+            border-radius: 8px 0 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .chatbot-toggle:hover {
+            background-color: var(--color-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .results-buttons {
+                flex-direction: column;
+            }
+            
+            .chatbot-slide {
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="contenedor">
+            <nav class="menu">
+                <a href="index.html"><b>Inicio</b></a>
+                <a href="indexT1.html"><b>Tema 1</b></a>
+                <a href="indexT2.html"><b>Tema 2</b></a>
+                <a href="Tabla.html"><b>Tabla Periódica</b></a>
+                <a href="cuestionario-tema1.html"><b>Cuestionario T1</b></a>
+                <a href="cuestionario-tema2.html"><b>Cuestionario T2</b></a>
+                <a href="chatbot.html"><b>Chatbot</b></a>
+            </nav>
+            <div class="contenido-header">
+                <h1 class="titulo-header"><b>CUESTIONARIO TEMA 2</b></h1>
+                <samp class="linea-header"></samp>
+                <h2 class="texto-header">
+                    Pon a prueba tus conocimientos sobre la tabla periódica y sus propiedades
+                </h2>
+                <a href="indexT2.html" class="action-header"><b>Volver al Tema 2</b></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="quiz-container">
+            <h2>Cuestionario: Tabla Periódica y Propiedades Periódicas</h2>
+            <form id="quiz-form">
+                <div class="question" id="q1">
+                    <h3>1. ¿Qué tendencia sigue el radio atómico en la tabla periódica?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q1" value="a">
+                                Aumenta de izquierda a derecha en un período y de arriba hacia abajo en un grupo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q1" value="b">
+                                Disminuye de izquierda a derecha en un período y aumenta de arriba hacia abajo en un grupo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q1" value="c">
+                                Aumenta de izquierda a derecha en un período y disminuye de arriba hacia abajo en un grupo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q1" value="d">
+                                Disminuye de izquierda a derecha en un período y también disminuye de arriba hacia abajo en un grupo
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q1"></div>
+                </div>
+
+                <div class="question" id="q2">
+                    <h3>2. ¿Qué es la electronegatividad?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q2" value="a">
+                                La capacidad de un átomo para atraer electrones hacia sí mismo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q2" value="b">
+                                La energía necesaria para separar un electrón de un átomo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q2" value="c">
+                                La energía liberada cuando un átomo gana un electrón
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q2" value="d">
+                                La carga efectiva que siente un electrón en un átomo
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q2"></div>
+                </div>
+
+                <div class="question" id="q3">
+                    <h3>3. ¿Qué elementos tienen la mayor energía de ionización?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q3" value="a">
+                                Los metales alcalinos (Grupo 1)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q3" value="b">
+                                Los metales alcalinotérreos (Grupo 2)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q3" value="c">
+                                Los halógenos (Grupo 17)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q3" value="d">
+                                Los gases nobles (Grupo 18)
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q3"></div>
+                </div>
+
+                <div class="question" id="q4">
+                    <h3>4. ¿Qué es la afinidad electrónica?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q4" value="a">
+                                La energía necesaria para separar un electrón de un átomo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q4" value="b">
+                                La energía liberada cuando un átomo gana un electrón
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q4" value="c">
+                                La capacidad de un átomo para atraer electrones hacia sí mismo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q4" value="d">
+                                La carga efectiva que siente un electrón en un átomo
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q4"></div>
+                </div>
+
+                <div class="question" id="q5">
+                    <h3>5. ¿Cuál de los siguientes elementos es un metal alcalino?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q5" value="a">
+                                Calcio (Ca)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q5" value="b">
+                                Potasio (K)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q5" value="c">
+                                Aluminio (Al)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q5" value="d">
+                                Cloro (Cl)
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q5"></div>
+                </div>
+
+                <div class="question" id="q6">
+                    <h3>6. ¿Qué es la carga nuclear efectiva?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q6" value="a">
+                                El número total de protones en el núcleo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q6" value="b">
+                                La carga real que mantiene a un electrón unido al núcleo, considerando el efecto de apantallamiento
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q6" value="c">
+                                La suma de protones y neutrones en el núcleo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q6" value="d">
+                                La diferencia entre el número de protones y electrones en un átomo
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q6"></div>
+                </div>
+
+                <div class="question" id="q7">
+                    <h3>7. ¿Qué grupo de elementos tiene la mayor electronegatividad?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q7" value="a">
+                                Metales alcalinos (Grupo 1)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q7" value="b">
+                                Metales alcalinotérreos (Grupo 2)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q7" value="c">
+                                Halógenos (Grupo 17)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q7" value="d">
+                                Gases nobles (Grupo 18)
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q7"></div>
+                </div>
+
+                <div class="question" id="q8">
+                    <h3>8. ¿Qué elemento tiene el mayor radio atómico?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q8" value="a">
+                                Francio (Fr)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q8" value="b">
+                                Flúor (F)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q8" value="c">
+                                Helio (He)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q8" value="d">
+                                Oxígeno (O)
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q8"></div>
+                </div>
+
+                <div class="question" id="q9">
+                    <h3>9. ¿Qué son los metaloides?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q9" value="a">
+                                Elementos que tienen propiedades exclusivamente metálicas
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q9" value="b">
+                                Elementos que tienen propiedades exclusivamente no metálicas
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q9" value="c">
+                                Elementos que tienen propiedades intermedias entre metales y no metales
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q9" value="d">
+                                Elementos que no tienen propiedades definidas
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q9"></div>
+                </div>
+
+                <div class="question" id="q10">
+                    <h3>10. ¿Cuál de los siguientes elementos es un gas noble?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q10" value="a">
+                                Cloro (Cl)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q10" value="b">
+                                Nitrógeno (N)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q10" value="c">
+                                Argón (Ar)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q10" value="d">
+                                Oxígeno (O)
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q10"></div>
+                </div>
+
+                <div class="question" id="q11">
+                    <h3>11. ¿Qué tendencia sigue la energía de ionización en la tabla periódica?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q11" value="a">
+                                Aumenta de izquierda a derecha en un período y de arriba hacia abajo en un grupo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q11" value="b">
+                                Disminuye de izquierda a derecha en un período y aumenta de arriba hacia abajo en un grupo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q11" value="c">
+                                Aumenta de izquierda a derecha en un período y disminuye de arriba hacia abajo en un grupo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q11" value="d">
+                                Disminuye de izquierda a derecha en un período y también disminuye de arriba hacia abajo en un grupo
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q11"></div>
+                </div>
+
+                <div class="question" id="q12">
+                    <h3>12. ¿Cuál de los siguientes elementos es un metal de transición?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q12" value="a">
+                                Sodio (Na)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q12" value="b">
+                                Hierro (Fe)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q12" value="c">
+                                Carbono (C)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q12" value="d">
+                                Cloro (Cl)
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q12"></div>
+                </div>
+
+                <div class="question" id="q13">
+                    <h3>13. ¿Qué elemento tiene la mayor electronegatividad?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q13" value="a">
+                                Flúor (F)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q13" value="b">
+                                Oxígeno (O)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q13" value="c">
+                                Cloro (Cl)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q13" value="d">
+                                Nitrógeno (N)
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q13"></div>
+                </div>
+
+                <div class="question" id="q14">
+                    <h3>14. ¿Qué son los números de oxidación?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q14" value="a">
+                                El número de electrones en la capa de valencia de un átomo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q14" value="b">
+                                El número de protones en el núcleo de un átomo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q14" value="c">
+                                Números positivos o negativos que indican el grado de oxidación o reducción de un átomo
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q14" value="d">
+                                El número de neutrones en el núcleo de un átomo
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q14"></div>
+                </div>
+
+                <div class="question" id="q15">
+                    <h3>15. ¿Cuál de los siguientes elementos es un contaminante ambiental importante?</h3>
+                    <ul class="options">
+                        <li>
+                            <label>
+                                <input type="radio" name="q15" value="a">
+                                Oro (Au)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q15" value="b">
+                                Plata (Ag)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q15" value="c">
+                                Mercurio (Hg)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="q15" value="d">
+                                Platino (Pt)
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="result" id="result-q15"></div>
+                </div>
+
+                <button type="button" id="submit-btn" class="submit-btn">
+                    <i class="fas fa-check"></i> Verificar Respuestas
+                </button>
+                <div id="score" style="margin-top: 2rem; font-weight: bold;"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chatbot deslizable -->
+    <div class="chatbot-slide" id="chatbot-slide">
+        <div class="chatbot-toggle" onclick="toggleChatbot()">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div style="padding: 1rem; border-bottom: 1px solid #eee; background-color: var(--color-primary); color: white;">
+            <h3><i class="fas fa-robot"></i> Asistente de Química</h3>
+        </div>
+        <div id="chat-messages" style="height: calc(80vh - 120px); overflow-y: auto; padding: 1rem;">
+            <div style="background-color: #f0f0f0; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                ¡Hola! Estoy aquí para ayudarte con preguntas sobre la tabla periódica y propiedades periódicas. ¿Necesitas ayuda con algún concepto?
+            </div>
+        </div>
+        <div style="padding: 1rem; border-top: 1px solid #eee;">
+            <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="chat-input" placeholder="Escribe tu pregunta..." style="flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                <button id="chat-send" style="padding: 0.5rem 1rem; background-color: var(--color-primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+          <!-- CONTACTO -->
+          <div class="contact-info">
+            <h3>Contacto</h3>
+            <p><strong>Teléfono:</strong> +52 123 456 7890</p>
+            <p><strong>Email:</strong> contrreo@hacer.com</p>
+            <p><strong>Dirección:</strong> TECNM, H. Matamoros</p>
+          </div>
+      
+          <!-- Columna de Redes Sociales -->
+          <div class="social-media">
+            <h3>Síguenos</h3>
+            <ul class="social-links">
+              <li><a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i> Facebook</a></li>
+              <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
+              <li><a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i> Twitter</a></li>
+            </ul>
+          </div>
+      
+          <!-- Columna de Enlaces Rápidos -->
+          <div class="quick-links">
+            <h3>Autores</h3>
+            <ul>
+              <li>Andrade Zertuche Carlos Alberto</li>
+              <li>Campos Guillermo Ulises Daniel</li>
+              <li>Covarruvias Ramírez Ricardo Daniel</li>
+              <li>Curiel Román Omar</li>
+              <li>Segura Lopez Estefanie</li>
+              <li>Villanueva Martinez Alfredo</li>
+            </ul>
+          </div>
+      
+          <!-- Formulario de Contacto -->
+          <div class="contact-form">
+            <h3>Envíanos un mensaje</h3>
+            <form action="" class="formulario" method="POST">
+              <input type="text" placeholder="Nombre" id="nombre" name="nombre" required>
+              <input type="email" placeholder="Correo" id="correo" name="correo" required>
+              <textarea name="mensaje" id="mensaje" placeholder="Mensaje"></textarea>
+              <button class="boton" type="submit">Contactar</button>
+            </form>
+          </div>
+        </div>
+      
+        <!-- Pie de Página -->
+        <div class="footer-bottom">
+          <p>&copy; 2025.Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quizForm = document.getElementById('quiz-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const scoreDiv = document.getElementById('score');
+            
+            // Respuestas correctas
+            const correctAnswers = {
+                q1: 'b',
+                q2: 'a',
+                q3: 'd',
+                q4: 'b',
+                q5: 'b',
+                q6: 'b',
+                q7: 'c',
+                q8: 'a',
+                q9: 'c',
+                q10: 'c',
+                q11: 'c',
+                q12: 'b',
+                q13: 'a',
+                q14: 'c',
+                q15: 'c'
+            };
+            
+            // Explicaciones
+            const explanations = {
+                q1: {
+                    correct: 'Correcto. El radio atómico disminuye de izquierda a derecha en un período debido al aumento de la carga nuclear efectiva, y aumenta de arriba hacia abajo en un grupo debido al aumento de niveles de energía.',
+                    incorrect: 'Incorrecto. El radio atómico disminuye de izquierda a derecha en un período y aumenta de arriba hacia abajo en un grupo.'
+                },
+                q2: {
+                    correct: 'Correcto. La electronegatividad es la capacidad de un átomo para atraer electrones hacia sí mismo en un enlace químico.',
+                    incorrect: 'Incorrecto. La electronegatividad es la capacidad de un átomo para atraer electrones hacia sí mismo en un enlace químico.'
+                },
+                q3: {
+                    correct: 'Correcto. Los gases nobles (Grupo 18) tienen la mayor energía de ionización debido a su configuración electrónica estable.',
+                    incorrect: 'Incorrecto. Los gases nobles (Grupo 18) tienen la mayor energía de ionización debido a su configuración electrónica estable.'
+                },
+                q4: {
+                    correct: 'Correcto. La afinidad electrónica es la energía liberada cuando un átomo en estado gaseoso acepta un electrón para formar un anión.',
+                    incorrect: 'Incorrecto. La afinidad electrónica es la energía liberada cuando un átomo en estado gaseoso acepta un electrón para formar un anión.'
+                },
+                q5: {
+                    correct: 'Correcto. El potasio (K) es un metal alcalino que pertenece al Grupo 1 de la tabla periódica.',
+                    incorrect: 'Incorrecto. El potasio (K) es un metal alcalino que pertenece al Grupo 1 de la tabla periódica.'
+                },
+                q6: {
+                    correct: 'Correcto. La carga nuclear efectiva es la carga real que mantiene a un electrón unido al núcleo, considerando el efecto de apantallamiento de los electrones internos.',
+                    incorrect: 'Incorrecto. La carga nuclear efectiva es la carga real que mantiene a un electrón unido al núcleo, considerando el efecto de apantallamiento de los electrones internos.'
+                },
+                q7: {
+                    correct: 'Correcto. Los halógenos (Grupo 17) tienen la mayor electronegatividad, con el flúor (F) siendo el elemento más electronegativo de la tabla periódica.',
+                    incorrect: 'Incorrecto. Los halógenos (Grupo 17) tienen la mayor electronegatividad, con el flúor (F) siendo el elemento más electronegativo de la tabla periódica.'
+                },
+                q8: {
+                    correct: 'Correcto. El francio (Fr) tiene el mayor radio atómico debido a que está ubicado en la esquina inferior izquierda de la tabla periódica.',
+                    incorrect: 'Incorrecto. El francio (Fr) tiene el mayor radio atómico debido a que está ubicado en la esquina inferior izquierda de la tabla periódica.'
+                },
+                q9: {
+                    correct: 'Correcto. Los metaloides son elementos que tienen propiedades intermedias entre metales y no metales, como el boro (B), silicio (Si) y germanio (Ge).',
+                    incorrect: 'Incorrecto. Los metaloides son elementos que tienen propiedades intermedias entre metales y no metales, como el boro (B), silicio (Si) y germanio (Ge).'
+                },
+                q10: {
+                    correct: 'Correcto. El argón (Ar) es un gas noble que pertenece al Grupo 18 de la tabla periódica.',
+                    incorrect: 'Incorrecto. El argón (Ar) es un gas noble que pertenece al Grupo 18 de la tabla periódica.'
+                },
+                q11: {
+                    correct: 'Correcto. La energía de ionización aumenta de izquierda a derecha en un período y disminuye de arriba hacia abajo en un grupo.',
+                    incorrect: 'Incorrecto. La energía de ionización aumenta de izquierda a derecha en un período y disminuye de arriba hacia abajo en un grupo.'
+                },
+                q12: {
+                    correct: 'Correcto. El hierro (Fe) es un metal de transición que pertenece al Grupo 8 de la tabla periódica.',
+                    incorrect: 'Incorrecto. El hierro (Fe) es un metal de transición que pertenece al Grupo 8 de la tabla periódica.'
+                },
+                q13: {
+                    correct: 'Correcto. El flúor (F) tiene la mayor electronegatividad de todos los elementos de la tabla periódica.',
+                    incorrect: 'Incorrecto. El flúor (F) tiene la mayor electronegatividad de todos los elementos de la tabla periódica.'
+                },
+                q14: {
+                    correct: 'Correcto. Los números de oxidación son números positivos o negativos que indican el grado de oxidación o reducción de un átomo en un compuesto.',
+                    incorrect: 'Incorrecto. Los números de oxidación son números positivos o negativos que indican el grado de oxidación o reducción de un átomo en un compuesto.'
+                },
+                q15: {
+                    correct: 'Correcto. El mercurio (Hg) es un metal pesado altamente tóxico y un importante contaminante ambiental.',
+                    incorrect: 'Incorrecto. El mercurio (Hg) es un metal pesado altamente tóxico y un importante contaminante ambiental.'
+                }
+            };
+
+            // Funciones del modal de resultados
+            function showResultsModal(score, total) {
+                const modal = document.createElement('div');
+                modal.className = 'results-modal';
+                modal.id = 'results-modal';
+                
+                const isSuccess = score === total;
+                const percentage = Math.round((score / total) * 100);
+                
+                modal.innerHTML = `
+                    <div class="results-content">
+                        <h2 style="color: ${isSuccess ? 'var(--color-secondary)' : '#e74c3c'}; text-align: center;">
+                            ${isSuccess ? '¡Felicitaciones! 🎉' : 'Resultados'}
+                        </h2>
+                        <div style="text-align: center; margin: 2rem 0;">
+                            <div style="font-size: 3rem; font-weight: bold; color: var(--color-primary);">
+                                ${score}/${total}
+                            </div>
+                            <div style="font-size: 1.2rem; margin-top: 0.5rem;">
+                                ${percentage}% de aciertos
+                            </div>
+                            <p style="margin-top: 1rem;">
+                                ${isSuccess ? 
+                                    '¡Excelente trabajo! Has dominado completamente este tema de la tabla periódica y propiedades periódicas.' : 
+                                    'Buen intento. Revisa las respuestas incorrectas para mejorar tu comprensión de la tabla periódica y propiedades periódicas.'}
+                            </p>
+                        </div>
+                        <div class="results-buttons">
+                            <button class="result-btn review-btn" onclick="reviewAnswers()">
+                                <i class="fas fa-search"></i> Ver Respuestas
+                            </button>
+                            <button class="result-btn retry-btn" onclick="retryQuiz()">
+                                <i class="fas fa-redo"></i> Reintentar
+                            </button>
+                            <button class="result-btn topic-btn" onclick="goToTopic()">
+                                <i class="fas fa-book"></i> Ver Tema
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                modal.style.display = 'block';
+            }
+
+            window.reviewAnswers = function() {
+                document.getElementById('results-modal').style.display = 'none';
+                document.querySelectorAll('.result').forEach(result => {
+                    result.style.display = 'block';
+                });
+                document.querySelector('.quiz-container').scrollIntoView({ behavior: 'smooth' });
+            };
+
+            window.retryQuiz = function() {
+                location.reload();
+            };
+
+            window.goToTopic = function() {
+                window.location.href = 'indexT2.html';
+            };
+
+            // Funciones del chatbot
+            window.toggleChatbot = function() {
+                document.getElementById('chatbot-slide').classList.toggle('active');
+            };
+
+            async function getBotResponse(userMessage) {
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCxUIXXKwR4dV9k3uzf4v2Tq592kaToP3g`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: `Eres un asistente educativo especializado en química. Responde solo preguntas relacionadas con química de manera educativa y clara. Enfócate en el tema de la tabla periódica y propiedades periódicas si es relevante. El usuario está realizando un cuestionario sobre la tabla periódica y propiedades periódicas. Pregunta del usuario: ${userMessage}`
+                                }]
+                            }]
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    return data.candidates[0].content.parts[0].text;
+                } catch (error) {
+                    return 'Lo siento, no puedo conectarme en este momento. ¿Podrías reformular tu pregunta sobre química?';
+                }
+            }
+
+            function addMessage(message, isUser = false) {
+                const messagesContainer = document.getElementById('chat-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.style.cssText = `
+                    background-color: ${isUser ? 'var(--color-primary)' : '#f0f0f0'};
+                    color: ${isUser ? 'white' : 'black'};
+                    padding: 0.5rem;
+                    border-radius: 8px;
+                    margin-bottom: 1rem;
+                    margin-left: ${isUser ? '2rem' : '0'};
+                    margin-right: ${isUser ? '0' : '2rem'};
+                `;
+                messageDiv.textContent = message;
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            document.getElementById('chat-send').addEventListener('click', async function() {
+                const input = document.getElementById('chat-input');
+                const message = input.value.trim();
+                
+                if (message) {
+                    addMessage(message, true);
+                    input.value = '';
+                    
+                    const response = await getBotResponse(message);
+                    addMessage(response);
+                }
+            });
+
+            document.getElementById('chat-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('chat-send').click();
+                }
+            });
+            
+            submitBtn.addEventListener('click', function() {
+                let score = 0;
+                
+                // Verificar cada pregunta
+                for (let i = 1; i <= 15; i++) {
+                    const questionName = 'q' + i;
+                    const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+                    const resultDiv = document.getElementById(`result-${questionName}`);
+                    
+                    if (selectedOption) {
+                        const userAnswer = selectedOption.value;
+                        
+                        if (userAnswer === correctAnswers[questionName]) {
+                            score++;
+                            resultDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${explanations[questionName].correct}`;
+                            resultDiv.className = 'result correct';
+                        } else {
+                            resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> ${explanations[questionName].incorrect}`;
+                            resultDiv.className = 'result incorrect';
+                        }
+                    } else {
+                        resultDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> No has seleccionado ninguna respuesta. ${explanations[questionName].incorrect}`;
+                        resultDiv.className = 'result incorrect';
+                    }
+                }
+                
+                // Mostrar modal de resultados
+                showResultsModal(score, 15);
+                submitBtn.style.display = 'none';
+            });
+
+            // Animaciones para las preguntas
+            document.querySelectorAll('.question').forEach((question, index) => {
+                question.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
