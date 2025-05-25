@@ -760,11 +760,12 @@ function toggleUniversalChatbot() {
 
 async function getBotResponseUniversal(userMessage) {
     try {
-        const response = await fetch('omar-orvt-github-io.vercel.app', {
+        const response = await fetch('https://tu-backend.vercel.app/api/chat', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ message: userInput })
-});
+});:contentReference[oaicite:16]{index=16}
+
             body: JSON.stringify({
                 contents: [{
                     parts: [{
