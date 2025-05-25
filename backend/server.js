@@ -7,8 +7,8 @@ const PORT = process.env.PORT || 3000;
 
 // Middlewares básicos
 app.use(cors({
-    origin: ['https://omar-orvt-github-io.vercel.app', 'https://omarorvt.github.io', 'https://omarorvt.github.io/*'],
-    credentials: true
+    origin: '*',
+    credentials: false
 }));
 app.use(express.json());
 
