@@ -163,3 +163,5 @@ process.on('uncaughtException', (error) => {
 process.on('unhandledRejection', (reason, promise) => {
     console.error('Promesa rechazada:', reason);
 });
+
+module.exports = app;
