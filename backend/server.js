@@ -118,7 +118,7 @@ function getLocalResponse(userMessage) {
 
 // Función para usar Google Gemini (si está configurado)
 async function getGeminiResponse(userMessage) {
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'tu_api_key_aqui') {
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'AIzaSyCxUIXXKwR4dV9k3uzf4v2Tq592kaToP3g') {
         return null; // No usar Gemini si no está configurado
     }
     
@@ -168,7 +168,7 @@ app.post('/api/chat', async (req, res) => {
         response = getLocalResponse(message);
         
         // Si no hay respuesta local satisfactoria, intentar Gemini
-        if (response.includes('más específico') && process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'tu_api_key_aqui') {
+        if (response.includes('más específico') && process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'AIzaSyCxUIXXKwR4dV9k3uzf4v2Tq592kaToP3g') {
             const geminiResponse = await getGeminiResponse(message);
             if (geminiResponse) {
                 response = geminiResponse;
@@ -198,7 +198,7 @@ app.get('/api/health', (req, res) => {
         status: 'OK',
         message: 'Servidor funcionando correctamente',
         timestamp: new Date().toISOString(),
-        geminiConfigured: !!(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'tu_api_key_aqui')
+        geminiConfigured: !!(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'AIzaSyCxUIXXKwR4dV9k3uzf4v2Tq592kaToP3g')
     });
 });
 
@@ -209,9 +209,9 @@ app.use(express.static('../'));
 app.listen(PORT, () => {
     console.log(`🚀 Servidor iniciado en http://localhost:${PORT}`);
     console.log(`📊 Verificar estado: http://localhost:${PORT}/api/health`);
-    console.log(`🔑 Google Gemini: ${process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'tu_api_key_aqui' ? 'Configurado ✅' : 'No configurado (usando respuestas locales) ⚠️'}`);
+    console.log(`🔑 Google Gemini: ${process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'AIzaSyCxUIXXKwR4dV9k3uzf4v2Tq592kaToP3g' ? 'Configurado ✅' : 'No configurado (usando respuestas locales) ⚠️'}`);
     
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'tu_api_key_aqui') {
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'AIzaSyCxUIXXKwR4dV9k3uzf4v2Tq592kaToP3g') {
         console.log(`\n💡 Para habilitar IA avanzada:`);
         console.log(`   1. Obtén una API key en: https://makersuite.google.com/app/apikey`);
         console.log(`   2. Agrega GOOGLE_API_KEY=tu_clave_real en el archivo .env`);
