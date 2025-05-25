@@ -690,7 +690,7 @@
         // Función para verificar conexión al servidor
         async function checkServerConnection() {
             try {
-                const response = await fetch('http://localhost:3000/api/health');
+                const response = await fetch('https://omar-orvt-github-9aqj9cge9-omarsddsssd-8815s-projects.vercel.app/api/health');
                 if (response.ok) {
                     const connectionStatus = document.getElementById('connection-status');
                     connectionStatus.className = 'connection-status';
