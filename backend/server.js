@@ -85,6 +85,16 @@ async function getGeminiResponse(userMessage) {
 }
 
 // Endpoint principal del chatbot
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Backend de Química - API funcionando ✅',
+        endpoints: {
+            health: '/api/health',
+            chat: '/api/chat (POST)'
+        }
+    });
+});
+
 app.post('/api/chat', async (req, res) => {
     try {
         const { message } = req.body;
