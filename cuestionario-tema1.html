@@ -943,28 +943,6 @@
                 window.location.href = 'indexT1.html';
             };
 
-            // Funciones del chatbot
-            window.toggleChatbot = function() {
-                document.getElementById('chatbot-slide').classList.toggle('active');
-            };
-
-            function addMessage(message, isUser = false) {
-                const messagesContainer = document.getElementById('chat-messages');
-                const messageDiv = document.createElement('div');
-                messageDiv.style.cssText = `
-                    background-color: ${isUser ? 'var(--color-primary)' : '#f0f0f0'};
-                    color: ${isUser ? 'white' : 'black'};
-                    padding: 0.5rem;
-                    border-radius: 8px;
-                    margin-bottom: 1rem;
-                    margin-left: ${isUser ? '2rem' : '0'};
-                    margin-right: ${isUser ? '0' : '2rem'};
-                `;
-                messageDiv.textContent = message;
-                messagesContainer.appendChild(messageDiv);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
-
             document.getElementById('chat-send').addEventListener('click', async function() {
                 const input = document.getElementById('chat-input');
                 const message = input.value.trim();
