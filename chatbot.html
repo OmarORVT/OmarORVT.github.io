@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot de Química - Funcional</title>
+    <title>QuimiBot v2.0 - Chatbot de Química Mejorado</title>
     <link rel="stylesheet" href="CSS/estilos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -256,6 +256,8 @@
             gap: 0.5rem;
             margin-bottom: 1rem;
             flex-wrap: wrap;
+            max-height: 120px;
+            overflow-y: auto;
         }
         
         .quick-action {
@@ -267,6 +269,7 @@
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
         
         .quick-action:hover {
@@ -295,6 +298,14 @@
             margin-bottom: 1rem;
         }
         
+        .version-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        
         @media (max-width: 768px) {
             .chat-container {
                 margin: 1rem;
@@ -307,6 +318,11 @@
             
             .quick-actions {
                 justify-content: center;
+            }
+            
+            .quick-action {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
             }
         }
     </style>
@@ -324,10 +340,10 @@
                 <a href="chatbot.html"><b>Chatbot</b></a>
             </nav>
             <div class="contenido-header">
-                <h1 class="titulo-header"><b>CHATBOT DE QUÍMICA</b></h1>
+                <h1 class="titulo-header"><b>QUIMIBOT v2.0 - CHATBOT DE QUÍMICA MEJORADO</b></h1>
                 <samp class="linea-header"></samp>
                 <h2 class="texto-header">
-                    Asistente virtual inteligente para resolver todas tus dudas de química
+                    Asistente virtual inteligente con base de conocimientos expandida y búsqueda avanzada
                 </h2>
                 <a href="index.html" class="action-header"><b>Volver al Inicio</b></a>
             </div>
@@ -341,8 +357,8 @@
                     <i class="fas fa-robot"></i>
                 </div>
                 <div class="info">
-                    <h2>QuimiBot</h2>
-                    <p>Tu asistente personal de química</p>
+                    <h2>QuimiBot <span class="version-badge">v2.0</span></h2>
+                    <p>Tu asistente personal de química mejorado</p>
                 </div>
                 <div class="chat-status">
                     <div class="status-indicator"></div>
@@ -352,19 +368,26 @@
             
             <div class="chat-messages" id="chat-messages">
                 <div class="connection-status" id="connection-status">
-                    <i class="fas fa-info-circle"></i> Funcionando en modo local con base de conocimientos integrada
+                    <i class="fas fa-info-circle"></i> Funcionando con base de conocimientos expandida (90+ conceptos)
                 </div>
                 
                 <div class="welcome-message">
-                    <h3><i class="fas fa-flask"></i> ¡Bienvenido a QuimiBot!</h3>
-                    <p>Soy tu asistente virtual especializado en química. Puedo ayudarte con:</p>
+                    <h3><i class="fas fa-flask"></i> ¡Bienvenido a QuimiBot v2.0!</h3>
+                    <p>Soy tu asistente virtual especializado en química con capacidades mejoradas. Ahora puedo ayudarte con:</p>
                     <ul style="text-align: left; display: inline-block; margin-top: 1rem;">
-                        <li>Conceptos básicos y avanzados de química</li>
-                        <li>Tabla periódica y propiedades de elementos</li>
-                        <li>Estructuras atómicas y teoría cuántica</li>
-                        <li>Enlaces químicos y propiedades periódicas</li>
-                        <li>Explicaciones paso a paso</li>
+                        <li><strong>Estructura atómica</strong>: protones, neutrones, electrones, modelos atómicos</li>
+                        <li><strong>Teoría cuántica</strong>: números cuánticos, orbitales, configuración electrónica</li>
+                        <li><strong>Tabla periódica</strong>: grupos, períodos, propiedades periódicas</li>
+                        <li><strong>Enlaces químicos</strong>: iónico, covalente, metálico</li>
+                        <li><strong>Reacciones químicas</strong>: balanceo, estequiometría</li>
+                        <li><strong>Estados de la materia</strong> y cambios de fase</li>
+                        <li><strong>Ácidos y bases</strong>: pH, neutralización</li>
+                        <li><strong>Aplicaciones tecnológicas</strong> de la química</li>
                     </ul>
+                    <p style="margin-top: 1rem; font-style: italic;">
+                        <strong>Nuevas características:</strong> Búsqueda inteligente, tolerancia a errores ortográficos, 
+                        insensible a mayúsculas y acentos.
+                    </p>
                 </div>
             </div>
             
@@ -380,26 +403,15 @@
             </div>
             
             <div class="chat-input-container">
-                <div class="quick-actions">
-                    <button class="quick-action" data-message="¿Qué es un átomo?">
-                        <i class="fas fa-atom"></i> ¿Qué es un átomo?
-                    </button>
-                    <button class="quick-action" data-message="Explícame la tabla periódica">
-                        <i class="fas fa-table"></i> Tabla periódica
-                    </button>
-                    <button class="quick-action" data-message="¿Qué son los enlaces químicos?">
-                        <i class="fas fa-link"></i> Enlaces químicos
-                    </button>
-                    <button class="quick-action" data-message="¿Qué es la electronegatividad?">
-                        <i class="fas fa-bolt"></i> Electronegatividad
-                    </button>
+                <div class="quick-actions" id="quick-actions">
+                    <!-- Las preguntas sugeridas se cargarán dinámicamente -->
                 </div>
                 
                 <div class="chat-input">
                     <textarea 
                         id="user-input" 
                         class="input-field" 
-                        placeholder="Escribe tu pregunta sobre química..."
+                        placeholder="Escribe tu pregunta sobre química... (ahora con búsqueda inteligente)"
                         rows="1"
                         autocomplete="off"
                     ></textarea>
@@ -453,129 +465,94 @@
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; 2025. Todos los derechos reservados.</p>
+            <p>&copy; 2025. Todos los derechos reservados. QuimiBot v2.0</p>
         </div>
     </footer>
 
     <script>
         // Variables globales
         let chatbot;
+        let suggestedQuestions = [];
         
-        // Base de conocimientos de química
-        const knowledgeBase = {
-  "atomo": "El átomo es la unidad básica de la materia, compuesto por protones, neutrones y electrones. La estructura atómica determina las propiedades químicas y físicas de los elementos.",
-  "protones": "Los protones son partículas subatómicas con carga positiva ubicadas en el núcleo del átomo. Su número define el número atómico del elemento.",
-  "neutrones": "Los neutrones no tienen carga eléctrica y también se ubican en el núcleo. Afectan la masa atómica y contribuyen a la estabilidad nuclear.",
-  "electrones": "Partículas con carga negativa que giran alrededor del núcleo en niveles de energía. Participan en enlaces químicos y reacciones.",
-  "rayos catodicos": "Corrientes de electrones que se mueven desde el cátodo al ánodo en tubos de descarga. Fueron clave en el descubrimiento del electrón.",
-  "rayos anodicos": "Corrientes de iones positivos observadas en experimentos con tubos de descarga de gas. Ayudaron a entender la estructura del átomo.",
-  "modelo de bohr": "Propone que los electrones orbitan el núcleo en niveles de energía cuantizados. Explica los espectros de emisión del hidrógeno.",
-  "modelo de thomson": "Conocido como el modelo del pudín de pasas. Supone que los electrones están incrustados en una masa con carga positiva.",
-  "modelo de rutherford": "Describe un núcleo central denso con carga positiva donde está concentrada casi toda la masa. Los electrones giran a su alrededor.",
-  "modelo cuantico": "Modelo actual del átomo basado en probabilidades y funciones de onda. Describe orbitales y principios como el de exclusión de Pauli.",
-  "efecto fotoelectrico": "Cuando la luz incide sobre una superficie metálica, libera electrones. Einstein lo explicó con la idea de fotones y energía cuantizada.",
-  "teoria cuantica": "Explica el comportamiento de partículas subatómicas. Introduce conceptos como niveles de energía, orbitales y dualidad onda-partícula.",
-  "principio de incertidumbre": "Establece que no se puede conocer simultáneamente con precisión la posición y el momento de una partícula (Heisenberg).",
-  "dualidad onda particula": "Postula que partículas como los electrones tienen comportamiento tanto de partícula como de onda (De Broglie).",
-  "ecuacion de schrodinger": "Describe cómo evoluciona la función de onda en el tiempo. Es la base matemática de la mecánica cuántica.",
-  "funcion de onda": "Representa el estado cuántico de una partícula. El cuadrado de su valor da la probabilidad de encontrar la partícula en un punto.",
-  "numeros cuanticos": "Son valores que describen las propiedades del electrón en un átomo: n (principal), l (azimutal), m (magnético), y s (espín).",
-  "principio de aufbau": "Los electrones ocupan orbitales de menor energía antes de los de mayor energía, según un orden determinado.",
-  "principio de hund": "Los electrones ocupan orbitales degenerados (misma energía) individualmente con espines paralelos antes de emparejarse.",
-  "principio de pauli": "Ningún electrón en un mismo átomo puede tener los mismos cuatro números cuánticos.",
-  "orbital": "Región del espacio donde existe una alta probabilidad de encontrar un electrón.",
-  "configuracion electronica": "Distribución de los electrones de un átomo en niveles y subniveles de energía.",
-  "isotopos": "Átomos del mismo elemento con igual número de protones pero diferente número de neutrones.",
-  "masa atomica": "Es el promedio ponderado de las masas de los isótopos de un elemento.",
-  "enlace ionico": "Se forma por transferencia de electrones entre un metal y un no metal. Resulta en iones con cargas opuestas que se atraen.",
-  "enlace covalente": "Se forma por compartición de pares de electrones entre átomos no metálicos.",
-  "enlace metalico": "Enlace entre átomos metálicos donde los electrones de valencia se mueven libremente creando un mar de electrones.",
-  "electronegatividad": "Capacidad de un átomo para atraer electrones compartidos en un enlace químico.",
-  "afinidad electronica": "Energía liberada cuando un átomo gaseoso neutro gana un electrón.",
-  "energia de ionizacion": "Energía necesaria para remover un electrón de un átomo gaseoso en estado fundamental.",
-  "radio atomico": "Distancia entre el núcleo del átomo y su electrón más externo.",
-  "radio ionico": "Tamaño de un ion. Los cationes son más pequeños que su átomo original; los aniones, más grandes.",
-  "tabla periodica": "Organiza los elementos según su número atómico creciente. Agrupa elementos con propiedades similares.",
-  "periodos": "Filas horizontales de la tabla periódica que indican el número de niveles de energía.",
-  "grupos": "Columnas verticales en la tabla periódica. Los elementos de un mismo grupo tienen propiedades similares.",
-  "metales": "Elementos buenos conductores de calor y electricidad, maleables y dúctiles. Tienden a perder electrones.",
-  "no metales": "Elementos que no conducen bien la electricidad ni el calor. Tienden a ganar electrones.",
-  "metaloides": "Elementos con propiedades intermedias entre metales y no metales.",
-  "reaccion quimica": "Proceso en el cual una o más sustancias se transforman en otras nuevas con diferentes propiedades.",
-  "ley de conservacion de la masa": "La masa total en una reacción química se conserva, no se crea ni se destruye.",
-  "estequiometria": "Parte de la química que estudia las relaciones cuantitativas entre reactivos y productos en una reacción.",
-  "mol": "Unidad del SI que representa 6.022×10^23 partículas (átomos, moléculas, iones, etc).",
-  "masa molar": "Masa en gramos de un mol de sustancia. Se obtiene sumando las masas atómicas de sus elementos.",
-  "disolucion": "Mezcla homogénea de dos o más sustancias. El soluto se disuelve en el disolvente.",
-  "concentracion": "Cantidad de soluto disuelto en una cantidad específica de disolvente o solución.",
-  "ph": "Escala que mide la acidez o basicidad de una solución. Va de 0 a 14. pH<7: ácido; pH=7: neutro; pH>7: básico.",
-  "indicador": "Sustancia que cambia de color dependiendo del pH de la solución.",
-  "quimica organica": "Rama de la química que estudia los compuestos del carbono, como hidrocarburos, alcoholes, ácidos y más.",
-  "quimica inorganica": "Estudia los compuestos que no tienen carbono-hidrógeno como base, incluyendo sales, ácidos, óxidos, etc.",
-  "oxido": "Compuesto formado por un elemento y oxígeno. Ej: óxido de calcio (CaO).",
-  "acido": "Sustancia que libera iones hidrógeno (H+) en solución acuosa.",
-  "base": "Sustancia que libera iones hidroxilo (OH-) en solución acuosa.",
-  "sal": "Compuesto iónico formado por la reacción de un ácido y una base.",
-  "neutralizacion": "Reacción entre un ácido y una base que produce una sal y agua.",
-  "gas": "Estado de la materia sin forma ni volumen definido. Sus partículas están muy separadas y en movimiento.",
-  "liquido": "Estado de la materia con volumen definido pero forma variable.",
-  "solido": "Estado de la materia con forma y volumen definidos. Las partículas están muy unidas.",
-  "cambios fisicos": "Transformaciones que no alteran la composición química de la sustancia.",
-  "cambios quimicos": "Transformaciones donde se forman nuevas sustancias con diferente composición.",
-  "calor especifico": "Cantidad de energía necesaria para elevar la temperatura de un gramo de sustancia un grado Celsius.",
-  "fusion": "Cambio de estado de sólido a líquido.",
-  "ebullicion": "Paso de líquido a gas mediante aporte de calor.",
-  "sublimacion": "Paso directo de sólido a gas.",
-  "quimica ambiental": "Estudia los procesos químicos que ocurren en el medio ambiente y su impacto.",
-  "quimica verde": "Diseño de productos y procesos químicos que reducen o eliminan el uso de sustancias peligrosas.",
-  "espectroscopia": "Técnica que estudia la interacción de la luz con la materia para identificar sustancias.",
-  "catalizador": "Sustancia que aumenta la velocidad de una reacción sin consumirse en ella.",
-  "equilibrio quimico": "Estado donde las velocidades de reacción directa e inversa son iguales.",
-  "ley de le chatelier": "Si se modifica un sistema en equilibrio, este se ajusta para contrarrestar el cambio.",
-  "constante de equilibrio": "Relación entre concentraciones de productos y reactivos en equilibrio. Indica la extensión de la reacción.",
-  "cinetica quimica": "Estudia la velocidad de las reacciones químicas y los factores que la afectan.",
-  "energia de activacion": "Energía mínima necesaria para iniciar una reacción química."
-        };
+        // Preguntas sugeridas predeterminadas (se cargarán más del servidor)
+        const defaultQuestions = [
+            "¿Qué es un átomo?",
+            "Explícame la tabla periódica",
+            "¿Qué son los enlaces químicos?",
+            "¿Qué es la electronegatividad?",
+            "¿Cuáles son los números cuánticos?",
+            "¿Qué es el modelo atómico de Bohr?",
+            "Explícame los orbitales atómicos",
+            "¿Qué es la configuración electrónica?",
+            "¿Cuáles son los estados de la materia?",
+            "¿Qué es el pH?",
+            "¿Qué son los isótopos?",
+            "Explícame las reacciones químicas",
+            "¿Qué es la estequiometría?",
+            "¿Qué son los metales alcalinos?",
+            "¿Qué es la radiactividad?",
+            "Explícame el efecto fotoeléctrico",
+            "¿Qué es la teoría cuántica?",
+            "¿Qué son los gases nobles?",
+            "¿Qué es un mol?",
+            "Explícame los enlaces covalentes",
+            "¿Qué es la función de onda?",
+            "¿Qué son los metaloides?",
+            "Explícame el principio de Pauli",
+            "¿Qué es la afinidad electrónica?",
+            "¿Qué son los catalizadores?"
+        ];
 
-        // Función para obtener respuesta del chatbot
-        function getLocalResponse(userMessage) {
-            const message = userMessage.toLowerCase();
-            
-            // Buscar coincidencias en la base de conocimientos
-            for (const [keyword, response] of Object.entries(knowledgeBase)) {
-                if (message.includes(keyword)) {
-                    return response;
+        // Función para cargar preguntas sugeridas del servidor
+        async function loadSuggestedQuestions() {
+            try {
+                const response = await fetch('http://localhost:3000/api/suggested-questions');
+                if (response.ok) {
+                    const data = await response.json();
+                    suggestedQuestions = data.questions || defaultQuestions;
+                } else {
+                    suggestedQuestions = defaultQuestions;
                 }
+            } catch (error) {
+                console.log('Usando preguntas predeterminadas');
+                suggestedQuestions = defaultQuestions;
             }
             
-            // Respuestas para saludos y despedidas
-            if (message.includes('hola') || message.includes('saludos') || message.includes('buenos días') || message.includes('buenas tardes')) {
-                return '¡Hola! Soy QuimiBot, tu asistente personal de química. ¿En qué puedo ayudarte hoy? Puedo explicarte conceptos sobre átomos, tabla periódica, enlaces químicos y mucho más.';
-            }
-            
-            if (message.includes('gracias') || message.includes('muchas gracias')) {
-                return '¡De nada! Me alegra poder ayudarte con tus dudas de química. ¿Hay algo más en lo que pueda asistirte?';
-            }
-            
-            if (message.includes('adiós') || message.includes('hasta luego') || message.includes('chao') || message.includes('nos vemos')) {
-                return '¡Hasta luego! Espero haber sido de ayuda. Si tienes más preguntas sobre química, no dudes en volver a consultarme. ¡Que tengas un excelente día!';
-            }
-            
-            if (message.includes('ayuda') || message.includes('qué puedes hacer') || message.includes('cómo funcionas')) {
-                return 'Soy tu asistente de química y puedo ayudarte con:\n\n• **Conceptos básicos**: átomos, moléculas, elementos\n• **Tabla periódica** y propiedades de elementos\n• **Enlaces químicos** (iónico, covalente, metálico)\n• **Propiedades periódicas** (electronegatividad, radio atómico, etc.)\n• **Configuraciones electrónicas**\n• **Reacciones químicas** básicas\n• **pH** y conceptos ácido-base\n\n¡Pregúntame lo que necesites!';
-            }
-            
-            // Respuesta por defecto
-            return 'Interesante pregunta. Aunque mi base de conocimientos no tiene información específica sobre eso, puedo ayudarte con muchos temas de química como:\n\n• **Átomos** y partículas subatómicas\n• **Tabla periódica** y elementos\n• **Enlaces químicos**\n• **Propiedades periódicas**\n• **Configuraciones electrónicas**\n• **Conceptos ácido-base**\n\n¿Podrías reformular tu pregunta o elegir uno de estos temas?';
+            displayQuickActions();
         }
 
-        // Función para formatear mensajes
+        // Función para mostrar acciones rápidas
+        function displayQuickActions() {
+            const quickActionsContainer = document.getElementById('quick-actions');
+            quickActionsContainer.innerHTML = '';
+            
+            // Mostrar 8 preguntas aleatorias
+            const shuffled = [...suggestedQuestions].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 8);
+            
+            selected.forEach(question => {
+                const button = document.createElement('button');
+                button.className = 'quick-action';
+                button.textContent = question;
+                button.setAttribute('data-message', question);
+                button.addEventListener('click', function() {
+                    sendQuickMessage(this.getAttribute('data-message'));
+                });
+                quickActionsContainer.appendChild(button);
+            });
+        }
+
+        // Función para formatear mensajes con markdown básico
         function formatMessage(content) {
             return content
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/\n/g, '<br>')
-                .replace(/•/g, '•');
+                .replace(/•/g, '•')
+                .replace(/₂/g, '₂')
+                .replace(/₃/g, '₃')
+                .replace(/⁺/g, '⁺')
+                .replace(/⁻/g, '⁻');
         }
 
         // Función para agregar mensajes al chat
@@ -631,8 +608,31 @@
             typingIndicator.style.display = 'none';
         }
 
+        // Función para enviar mensaje al servidor
+        async function sendMessageToServer(message) {
+            try {
+                const response = await fetch('http://localhost:3000/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.response;
+                } else {
+                    throw new Error('Error del servidor');
+                }
+            } catch (error) {
+                console.error('Error al conectar con el servidor:', error);
+                return 'Lo siento, no puedo conectar con el servidor en este momento. Por favor, verifica que el servidor esté ejecutándose en http://localhost:3000';
+            }
+        }
+
         // Función para enviar mensaje
-        function sendMessage() {
+        async function sendMessage() {
             const userInput = document.getElementById('user-input');
             const message = userInput.value.trim();
             
@@ -647,12 +647,18 @@
             // Mostrar indicador de escritura
             showTypingIndicator();
             
-            // Simular tiempo de respuesta y mostrar respuesta del bot
+            // Enviar mensaje al servidor y mostrar respuesta
+            const response = await sendMessageToServer(message);
+            
             setTimeout(() => {
                 hideTypingIndicator();
-                const response = getLocalResponse(message);
                 addMessage(response, 'bot');
-            }, 1000 + Math.random() * 1000); // Entre 1-2 segundos
+                
+                // Actualizar preguntas sugeridas ocasionalmente
+                if (Math.random() < 0.3) {
+                    displayQuickActions();
+                }
+            }, 1000 + Math.random() * 1000);
         }
 
         // Función para ajustar altura del textarea
@@ -678,11 +684,36 @@
             sendMessage();
         }
 
+        // Función para verificar conexión al servidor
+        async function checkServerConnection() {
+            try {
+                const response = await fetch('http://localhost:3000/api/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    const connectionStatus = document.getElementById('connection-status');
+                    connectionStatus.className = 'connection-status';
+                    connectionStatus.style.backgroundColor = '#d1fae5';
+                    connectionStatus.style.color = '#065f46';
+                    connectionStatus.innerHTML = `<i class="fas fa-check-circle"></i> Conectado al servidor v${data.version} - ${data.knowledgeBase.concepts} conceptos disponibles`;
+                    
+                    const statusText = document.getElementById('status-text');
+                    statusText.textContent = 'Servidor conectado';
+                    
+                    console.log('Servidor conectado:', data);
+                }
+            } catch (error) {
+                console.log('Funcionando en modo local');
+                const connectionStatus = document.getElementById('connection-status');
+                connectionStatus.style.backgroundColor = '#fef3c7';
+                connectionStatus.style.color = '#92400e';
+                connectionStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Servidor no disponible - Verifica que esté ejecutándose en http://localhost:3000';
+            }
+        }
+
         // Inicialización cuando se carga la página
         document.addEventListener('DOMContentLoaded', function() {
             const userInput = document.getElementById('user-input');
             const sendBtn = document.getElementById('send-btn');
-            const quickActionButtons = document.querySelectorAll('.quick-action');
             
             // Event listeners
             sendBtn.addEventListener('click', sendMessage);
@@ -699,40 +730,17 @@
                 updateSendButtonState();
             });
             
-            // Event listeners para botones de acceso rápido
-            quickActionButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const message = this.getAttribute('data-message');
-                    sendQuickMessage(message);
-                });
-            });
-            
             // Auto-focus en el input
             userInput.focus();
             
-            // Verificar si hay servidor disponible
+            // Cargar preguntas sugeridas
+            loadSuggestedQuestions();
+            
+            // Verificar conexión al servidor
             checkServerConnection();
+            
+            console.log('QuimiBot v2.0 inicializado');
         });
-
-        // Función para verificar conexión al servidor
-        async function checkServerConnection() {
-            try {
-                const response = await fetch('https://omar-orvt-github-9aqj9cge9-omarsddsssd-8815s-projects.vercel.app/api/health');
-                if (response.ok) {
-                    const connectionStatus = document.getElementById('connection-status');
-                    connectionStatus.className = 'connection-status';
-                    connectionStatus.style.backgroundColor = '#d1fae5';
-                    connectionStatus.style.color = '#065f46';
-                    connectionStatus.innerHTML = '<i class="fas fa-check-circle"></i> Conectado al servidor - IA avanzada disponible';
-                    
-                    const statusText = document.getElementById('status-text');
-                    statusText.textContent = 'Servidor conectado';
-                }
-            } catch (error) {
-                // Mantener modo local si no hay servidor
-                console.log('Funcionando en modo local');
-            }
-        }
     </script>
 </body>
 </html>
