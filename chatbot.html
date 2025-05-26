@@ -308,11 +308,6 @@
             .quick-actions {
                 justify-content: center;
             }
-            
-            .quick-action {
-                font-size: 0.8rem;
-                padding: 0.4rem 0.8rem;
-            }
         }
     </style>
 </head>
@@ -398,42 +393,6 @@
                     <button class="quick-action" data-message="¿Qué es la electronegatividad?">
                         <i class="fas fa-bolt"></i> Electronegatividad
                     </button>
-                    <button class="quick-action" data-message="¿Qué son los números cuánticos?">
-                        <i class="fas fa-calculator"></i> Números cuánticos
-                    </button>
-                    <button class="quick-action" data-message="¿Qué es el modelo de Bohr?">
-                        <i class="fas fa-circle-notch"></i> Modelo de Bohr
-                    </button>
-                    <button class="quick-action" data-message="¿Qué son los orbitales?">
-                        <i class="fas fa-globe"></i> Orbitales
-                    </button>
-                    <button class="quick-action" data-message="¿Qué es la configuración electrónica?">
-                        <i class="fas fa-layer-group"></i> Configuración electrónica
-                    </button>
-                    <button class="quick-action" data-message="¿Qué son los isótopos?">
-                        <i class="fas fa-atom"></i> Isótopos
-                    </button>
-                    <button class="quick-action" data-message="¿Qué es el pH?">
-                        <i class="fas fa-vial"></i> pH
-                    </button>
-                    <button class="quick-action" data-message="¿Qué son los metales alcalinos?">
-                        <i class="fas fa-fire"></i> Metales alcalinos
-                    </button>
-                    <button class="quick-action" data-message="¿Qué es la radiactividad?">
-                        <i class="fas fa-radiation"></i> Radiactividad
-                    </button>
-                    <button class="quick-action" data-message="¿Qué es la estequiometría?">
-                        <i class="fas fa-balance-scale"></i> Estequiometría
-                    </button>
-                    <button class="quick-action" data-message="¿Qué son los gases nobles?">
-                        <i class="fas fa-wind"></i> Gases nobles
-                    </button>
-                    <button class="quick-action" data-message="¿Qué es un mol?">
-                        <i class="fas fa-cubes"></i> Mol
-                    </button>
-                    <button class="quick-action" data-message="¿Qué son los catalizadores?">
-                        <i class="fas fa-tachometer-alt"></i> Catalizadores
-                    </button>
                 </div>
                 
                 <div class="chat-input">
@@ -502,17 +461,56 @@
         // Variables globales
         let chatbot;
         
-        // Base de conocimientos de química (manteniendo tu estructura original)
+        // Base de conocimientos de química
         const knowledgeBase = {
-            // Tu base original se mantiene igual...
-            "atomo": "El átomo es la unidad básica de la materia, compuesto por protones, neutrones y electrones. La estructura atómica determina las propiedades químicas y físicas de los elementos.",
-            "protones": "Los protones son partículas subatómicas con carga positiva ubicadas en el núcleo del átomo. Su número define el número atómico del elemento.",
-            "neutrones": "Los neutrones no tienen carga eléctrica y también se ubican en el núcleo. Afectan la masa atómica y contribuyen a la estabilidad nuclear.",
-            "electrones": "Partículas con carga negativa que giran alrededor del núcleo en niveles de energía. Participan en enlaces químicos y reacciones.",
-            // ... (mantengo toda tu base original)
+            'átomo': 'El átomo es la unidad básica de la materia, compuesta por partículas subatómicas como protones, neutrones y electrones. Los protones tienen carga positiva (+), los neutrones no tienen carga (neutro), y los electrones tienen carga negativa (-). El núcleo contiene protones y neutrones, mientras que los electrones orbitan alrededor del núcleo en diferentes niveles de energía.',
+            
+            'tabla periódica': 'La tabla periódica es una organización sistemática de los elementos químicos según su número atómico, configuración electrónica y propiedades químicas recurrentes. Los elementos están organizados en períodos (filas horizontales) y grupos (columnas verticales). Los períodos indican el número de niveles de energía, mientras que los grupos indican el número de electrones de valencia.',
+            
+            'enlace químico': 'Los enlaces químicos son fuerzas de atracción que mantienen unidos a los átomos en moléculas y compuestos. Los principales tipos son:\n\n• **Enlace iónico**: transferencia completa de electrones\n• **Enlace covalente**: compartición de electrones\n• **Enlace metálico**: electrones deslocalizados en una "nube" electrónica',
+            
+            'electronegatividad': 'La electronegatividad es la capacidad de un átomo para atraer electrones hacia sí mismo en un enlace químico. **Tendencias periódicas:**\n\n• Aumenta de izquierda a derecha en un período\n• Disminuye de arriba hacia abajo en un grupo\n• El flúor es el elemento más electronegativo (4.0)\n• Los metales alcalinos son los menos electronegativos',
+            
+            'radio atómico': 'El radio atómico es la distancia desde el núcleo hasta el orbital más externo del átomo. **Tendencias periódicas:**\n\n• Disminuye de izquierda a derecha en un período (mayor carga nuclear efectiva)\n• Aumenta de arriba hacia abajo en un grupo (más niveles de energía)\n• El francio tiene el mayor radio atómico\n• El helio tiene el menor radio atómico',
+            
+            'energía de ionización': 'La energía de ionización es la energía necesaria para separar un electrón de un átomo en estado gaseoso. **Tendencias:**\n\n• Aumenta de izquierda a derecha en un período\n• Disminuye de arriba hacia abajo en un grupo\n• Los gases nobles tienen las energías de ionización más altas\n• Los metales alcalinos tienen las más bajas',
+            
+            'metales': 'Los metales son elementos que tienden a perder electrones para formar cationes. **Características:**\n\n• Brillo metálico característico\n• Conductividad eléctrica y térmica alta\n• Maleabilidad (se pueden hacer láminas)\n• Ductilidad (se pueden hacer hilos)\n• Se encuentran principalmente en el lado izquierdo de la tabla periódica',
+            
+            'no metales': 'Los no metales son elementos que tienden a ganar electrones para formar aniones. **Características:**\n\n• No tienen brillo metálico\n• Baja conductividad eléctrica y térmica\n• Pueden ser gases, líquidos o sólidos quebradizos\n• Se encuentran en el lado derecho de la tabla periódica\n• Incluyen elementos como C, N, O, F, S, Cl',
+            
+            'gases nobles': 'Los gases nobles son elementos del Grupo 18 de la tabla periódica. **Características:**\n\n• Configuración electrónica completa (estables)\n• Químicamente inertes bajo condiciones normales\n• Todos son gases monoatómicos\n• Incluyen: He, Ne, Ar, Kr, Xe, Rn\n• Se usan en iluminación, soldadura y atmósferas inertes',
+            
+            'hidrógeno': 'El hidrógeno (H) es el elemento más ligero y abundante en el universo. **Propiedades:**\n\n• Número atómico: 1\n• Un protón, un electrón\n• Gas incoloro, inodoro e insípido\n• Altamente inflamable\n• Forma agua al combinarse con oxígeno (2H₂ + O₂ → 2H₂O)',
+            
+            'oxígeno': 'El oxígeno (O) es un elemento esencial para la vida. **Propiedades:**\n\n• Número atómico: 8\n• Gas incoloro e inodoro\n• Constituve ~21% de la atmósfera\n• Esencial para la respiración y combustión\n• Forma enlaces con casi todos los elementos\n• Muy electronegativo',
+            
+            'carbono': 'El carbono (C) es fundamental para la vida orgánica. **Propiedades:**\n\n• Número atómico: 6\n• Puede formar 4 enlaces covalentes\n• Base de todos los compuestos orgánicos\n• Formas alotrópicas: diamante, grafito, fullerenos\n• Tetravalente y versátil',
+            
+            'enlace iónico': 'El enlace iónico se forma por transferencia completa de electrones. **Características:**\n\n• Ocurre entre metales y no metales\n• El metal pierde electrones (catión)\n• El no metal gana electrones (anión)\n• Atracción electrostática mantiene unidos los iones\n• Ejemplos: NaCl, CaF₂, MgO',
+            
+            'enlace covalente': 'El enlace covalente se forma por compartición de electrones. **Tipos:**\n\n• **Polar**: compartición desigual de electrones\n• **No polar**: compartición igual de electrones\n• **Simple, doble, triple**: según pares de electrones compartidos\n• Ocurre entre no metales\n• Ejemplos: H₂O, CO₂, NH₃',
+            
+            'ph': 'El pH es una medida de la acidez o basicidad de una solución. **Escala:**\n\n• 0-6.9: Ácido (más H⁺)\n• 7: Neutro\n• 7.1-14: Básico (más OH⁻)\n• pH = -log[H⁺]\n• Cada unidad representa un cambio de 10x en acidez',
+            
+            'mol': 'El mol es la unidad de cantidad de sustancia en el SI. **Definición:**\n\n• 1 mol = 6.022 × 10²³ entidades (número de Avogadro)\n• Puede ser átomos, moléculas, iones, etc.\n• Masa molar: masa de 1 mol de sustancia\n• Permite relacionar masa con número de partículas',
+            
+            'orbital': 'Un orbital es una región del espacio donde hay alta probabilidad de encontrar un electrón. **Tipos:**\n\n• **s**: esféricos (máx. 2 electrones)\n• **p**: forma de mancuerna (máx. 6 electrones)\n• **d**: formas complejas (máx. 10 electrones)\n• **f**: muy complejas (máx. 14 electrones)',
+            
+            'isótopo': 'Los isótopos son átomos del mismo elemento con diferente número de neutrones. **Características:**\n\n• Mismo número de protones (mismo elemento)\n• Diferente número de neutrones\n• Mismas propiedades químicas\n• Diferentes propiedades físicas\n• Ejemplos: ¹²C, ¹³C, ¹⁴C',
+            
+            'configuración electrónica': 'La configuración electrónica describe cómo se distribuyen los electrones en un átomo. **Principios:**\n\n• **Aufbau**: llenar orbitales de menor a mayor energía\n• **Pauli**: máximo 2 electrones por orbital con espines opuestos\n• **Hund**: llenar orbitales degenerados con electrones desapareados primero',
+            
+            'afinidad electrónica': 'La afinidad electrónica es la energía liberada cuando un átomo gana un electrón. **Tendencias:**\n\n• Generalmente aumenta de izquierda a derecha\n• Los halógenos tienen afinidades muy altas\n• Los metales alcalinotérreos tienen afinidades bajas\n• Se mide en kJ/mol',
+            
+            'reacción química': 'Una reacción química transforma reactivos en productos. **Características:**\n\n• Se rompen y forman enlaces químicos\n• Se conserva la masa (Ley de Lavoisier)\n• Puede liberar o absorber energía\n• Se representa con ecuaciones químicas\n• Requiere energía de activación',
+            
+            'ácido': 'Un ácido es una sustancia que dona protones (H⁺). **Propiedades:**\n\n• pH < 7\n• Sabor agrio\n• Reacciona con metales produciendo H₂\n• Cambia papel tornasol a rojo\n• Ejemplos: HCl, H₂SO₄, CH₃COOH',
+            
+            'base': 'Una base es una sustancia que acepta protones (H⁺). **Propiedades:**\n\n• pH > 7\n• Sabor amargo\n• Se siente resbaladiza al tacto\n• Cambia papel tornasol a azul\n• Ejemplos: NaOH, NH₃, Mg(OH)₂'
         };
 
-        // Función para obtener respuesta del chatbot (manteniendo tu estructura)
+        // Función para obtener respuesta del chatbot
         function getLocalResponse(userMessage) {
             const message = userMessage.toLowerCase();
             
@@ -523,7 +521,7 @@
                 }
             }
             
-            // Respuestas para saludos y despedidas (manteniendo tu estructura)
+            // Respuestas para saludos y despedidas
             if (message.includes('hola') || message.includes('saludos') || message.includes('buenos días') || message.includes('buenas tardes')) {
                 return '¡Hola! Soy QuimiBot, tu asistente personal de química. ¿En qué puedo ayudarte hoy? Puedo explicarte conceptos sobre átomos, tabla periódica, enlaces químicos y mucho más.';
             }
@@ -540,23 +538,17 @@
                 return 'Soy tu asistente de química y puedo ayudarte con:\n\n• **Conceptos básicos**: átomos, moléculas, elementos\n• **Tabla periódica** y propiedades de elementos\n• **Enlaces químicos** (iónico, covalente, metálico)\n• **Propiedades periódicas** (electronegatividad, radio atómico, etc.)\n• **Configuraciones electrónicas**\n• **Reacciones químicas** básicas\n• **pH** y conceptos ácido-base\n\n¡Pregúntame lo que necesites!';
             }
             
-            // Respuesta por defecto (manteniendo tu estructura)
-            return 'Puedo ayudarte con muchos temas de química como:\n\n• **Átomos** y partículas subatómicas\n• **Tabla periódica** y elementos\n• **Enlaces químicos**\n• **Propiedades periódicas**\n• **Configuraciones electrónicas**\n• **Conceptos ácido-base**\n\n¿Podrías reformular tu pregunta o elegir uno de estos temas?';
+            // Respuesta por defecto
+            return 'Interesante pregunta. Aunque mi base de conocimientos no tiene información específica sobre eso, puedo ayudarte con muchos temas de química como:\n\n• **Átomos** y partículas subatómicas\n• **Tabla periódica** y elementos\n• **Enlaces químicos**\n• **Propiedades periódicas**\n• **Configuraciones electrónicas**\n• **Conceptos ácido-base**\n\n¿Podrías reformular tu pregunta o elegir uno de estos temas?';
         }
 
-        // Resto de tu código JavaScript se mantiene EXACTAMENTE igual...
-        
         // Función para formatear mensajes
         function formatMessage(content) {
             return content
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/\n/g, '<br>')
-                .replace(/•/g, '•')
-                .replace(/₂/g, '₂')
-                .replace(/₃/g, '₃')
-                .replace(/⁺/g, '⁺')
-                .replace(/⁻/g, '⁻');
+                .replace(/•/g, '•');
         }
 
         // Función para agregar mensajes al chat
@@ -698,7 +690,7 @@
         // Función para verificar conexión al servidor
         async function checkServerConnection() {
             try {
-                const response = await fetch('http://localhost:3000/api/health');
+                const response = await fetch('https://omar-orvt-github-9aqj9cge9-omarsddsssd-8815s-projects.vercel.app/api/health');
                 if (response.ok) {
                     const connectionStatus = document.getElementById('connection-status');
                     connectionStatus.className = 'connection-status';
